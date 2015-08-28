@@ -1,0 +1,196 @@
+// This file is a part of Jing.
+//
+// Copyright (c) 2015 The Jing Authors.
+//
+// For the full copyright and license information, please view the LICENSE file
+// that was distributed with this source code.
+
+// this is a single line comment
+
+;
+;;
+;;;
+
+action up(a);
+action up(a, b);
+
+fluent floor(a);
+fluent floor(a, b);
+
+procedure foo() {}
+// https://github.com/lstat/jing/issues/2#issuecomment-136232241
+procedure foo(a) {}
+procedure foo(a, b, c) {}
+
+procedure foo() {
+    ;
+    ;;
+    {
+        ;
+    }
+    // semantics: action, fluent not allowed here
+    action boo(q);
+    fluent boo(q);
+
+    // error: procedures can't be nested
+    // procedure bar(f) {}
+
+    if (true) {
+        ;
+    }
+}
+
+procedure foo_while() {
+    while (false) {
+        ;
+    }
+}
+
+// error: outside procedure body
+// while () {}
+
+procedure foo_ifelse() {
+    if (true) {
+    }
+
+    if (~(true)) {
+    }
+
+    if (false) {
+    } else {
+    }
+
+    if (false) {
+    } else if (true) {
+    }
+
+    if (false) {
+    } else if (false) {
+    } else {
+    }
+
+    if (true) {
+        if (~true) {
+        } else {
+        }
+    }
+
+    if (xfluent) {
+    }
+
+    if (xaction) {
+    }
+
+    if (below_floor(n)) {
+    }
+
+    if ((proc()) && floor) { }
+}
+
+// error: outside procedure body
+// if () {}
+
+procedure foo_iter() {
+    iter {
+        ;
+    }
+
+    iter { iter { ; } }
+}
+
+procedure foo_citer() {
+    citer { }
+}
+
+procedure foo_pick() {
+    pick<a> {
+    }
+
+    pick<c, d> {
+        pick<f, g> {}
+    }
+}
+
+procedure foo_search() {
+    search {
+        ;
+    }
+}
+
+procedure simple_stmts() {
+    // action
+    up();
+
+    // fluent
+    floor;
+
+    // procedure calls
+    foo();
+    foo(a, b);
+
+    // formula
+    ?(true);
+    ?(false);
+    ?(~true);
+    ?(true || false);
+    ?(true && false);
+    ?((true || true) && (~false || true));
+}
+
+procedure interrupts() {
+    // statement list version
+    interrupt (true) {
+        up;
+    }
+
+    // single statement version
+    interrupt (true) foo();
+}
+
+// nondeterministic choice of argument
+procedure syn_ndet() {
+    // error: requires at least 2 blocks
+    // ndet {
+    //     one. {}
+    // }
+
+    ndet {
+        foo. { up; }
+        bar. { down; }
+    }
+
+    ndet {
+        foo. {
+            up;
+        }
+        bar. {
+            down;
+        }
+    }
+
+    // n-branches
+    ndet {
+        one. {
+        }
+        two. {
+        }
+        three. {
+        }
+    }
+}
+
+// concurrency with equal priority
+procedure syn_conc() {
+    conc {
+        a. { up; }
+        b. { down; }
+    }
+}
+
+// concurrency with priority
+procedure syn_pconc() {
+    pconc {
+        p1. { up; }
+        p2. { down; }
+    }
+}
