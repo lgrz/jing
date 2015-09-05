@@ -12,11 +12,23 @@
 
 #include <stdio.h>
 
+#include "node.h"
+#include "symtab.h"
+
+extern struct node *
+ntop;
+
+extern FILE *
+yyin;
+
 extern int
 yylineno;
 
 extern int
 yyparse(void);
+
+extern int
+yylex_destroy(void);
 
 void
 yyerror(char *s, ...);

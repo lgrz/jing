@@ -8,9 +8,17 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 
 #include "jing.h"
+
+/* AST root node */
+struct node *
+ntop = NULL;
+
+static char *
+infile = NULL;
 
 void
 yyerror(char *s, ...)
@@ -23,11 +31,42 @@ yyerror(char *s, ...)
     fprintf(stderr, "\n");
 }
 
+/*
+ * Stub out the emitter module.
+ */
+void
+emitter_walk_stub(struct node *top, FILE *stream)
+{
+    if (NODE_PROC == top->type) {
+        struct node_proc *proc = (struct node_proc *)top;
+        fprintf(stream, "proc(%s, []).\n", proc->sym->name);
+
+        free(proc->sym->name);
+        free(proc->sym);
+        free(proc);
+    }
+}
+
 int
 main(int argc, char **argv)
 {
-    (void) argc;
-    (void) argv;
+    if (2 != argc) {
+        fprintf(stderr, "todo usage\n");
+        exit(EXIT_FAILURE);
+    }
 
-    return yyparse();
+    infile = argv[1];
+    if (!(yyin = fopen(infile, "r"))) {
+        perror("fopen");
+        exit(EXIT_FAILURE);
+    }
+
+    yyparse();
+
+    yylex_destroy();
+    fclose(yyin);
+
+    emitter_walk_stub(ntop, stdout);
+
+    return 0;
 }

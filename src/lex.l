@@ -50,9 +50,9 @@
 "interrupt" { return LINTERRUPT; }
 "procedure" { return LPROCEDURE; }
 
-[a-z][a-zA-Z0-9_]* { return LNAME; }
+[a-z][a-zA-Z0-9_]* { yylval.sym = symtab_lookup(yytext); return LNAME; }
 
-[0-9]+  { yylval = atoi(yytext); return LNUMBER; }
+[0-9]+  { return LNUMBER; }
 
 "//".*
 [ \t\n]

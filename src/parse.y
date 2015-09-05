@@ -14,6 +14,11 @@ int
 yylex(void);
 %}
 
+%union {
+    struct node *node;
+    struct symbol *sym;
+}
+
 %token LACTION
        LFLUENT
        LIF
@@ -36,6 +41,15 @@ yylex(void);
 %token LNUMBER
        LNAME
 
+%type <node> opt_arg_list
+%type <node> proc_dcl
+%type <node> compound_stmt
+%type <node> xproc_dcl
+%type <node> xdcl_list_r
+%type <node> opt_xdcl_list
+
+%type <sym> LNAME
+
 %left LOROR
 %left LANDAND
 %right '~'
@@ -43,6 +57,9 @@ yylex(void);
 %%
 
 program: opt_xdcl_list
+       {
+            ntop = $1;
+       }
 ;
 
 stmt: common_dcl term
@@ -72,6 +89,9 @@ complex_stmt: if_stmt
 ;
 
 compound_stmt: '{' opt_stmt_list '}'
+                {
+                    $$ = NULL;
+                }
 ;
 
 if_stmt: LIF '(' expr ')' compound_stmt elseif_list else
@@ -142,6 +162,8 @@ psuedo_expr: LNAME
 
 xdcl: common_dcl
     | xproc_dcl
+        {
+        }
     | term
 ;
 
@@ -156,14 +178,25 @@ fluent_dcl: LFLUENT LNAME '(' arg_list_r ')'
 ;
 
 xproc_dcl: proc_dcl compound_stmt
+         {
+            $$ = $1;
+            node_proc_body($$, $2);
+         }
 ;
 
 proc_dcl: LPROCEDURE LNAME '(' opt_arg_list ')'
+        {
+            $$ = node_proc_new($2, $4);
+        }
 ;
 
 /* lists */
 xdcl_list_r: xdcl
+                {
+                }
            | xdcl_list_r xdcl
+                {
+                }
 ;
 
 stmt_list_r: stmt
@@ -183,7 +216,11 @@ delta_list:
 
 /* optional */
 opt_xdcl_list:
+                 {
+                 }
              | xdcl_list_r
+                {
+                }
 ;
 
 opt_stmt_list:
@@ -191,7 +228,13 @@ opt_stmt_list:
 ;
 
 opt_arg_list:
+                {
+                    $$ = NULL;
+                }
             | arg_list_r
+                {
+                    $$ = NULL;
+                }
 ;
 
 term: ';'
