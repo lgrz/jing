@@ -59,3 +59,42 @@ symtab_lookup(char *name)
 
     return sym;
 }
+
+/*
+ * Remove the symbol `name` from the symbol table
+ *
+ * The `struct symbol` is used as a parameter as a work around so clients
+ * calling this function don't need to know the layout of `struct symbol` see
+ * the `node` module. Ideally the `name` would be the parameter as a lookup is
+ * required to reorganise the linked lists.
+ */
+void
+symtab_free(struct symbol *sym)
+{
+    char *name;
+    uint32_t key;
+    struct symbol *curr, *prev = NULL;
+
+    name = sym->name;
+    key = str_hash(name) % NHASH;
+    curr = symtab[key];
+    while (curr) {
+        if (0 == strcmp(name, curr->name)) {
+            break;
+        }
+        prev = curr;
+        curr = curr->next;
+    }
+
+    if (curr) {
+        if (!prev) {
+            symtab[key] = curr->next;
+        } else {
+            prev->next = curr->next;
+        }
+
+        free(curr->name);
+        free(curr->def);
+        free(curr);
+    }
+}

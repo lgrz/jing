@@ -13,13 +13,16 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#include "array.h"
 #include "util.h"
 
 struct symbol;
 
 enum node_type {
     NODE_NIL,
-    NODE_PROC
+    NODE_PROC,
+    NODE_SYMREF,
+    NODE_LIST
 };
 
 struct node {
@@ -31,15 +34,39 @@ struct node {
 struct node_proc {
     uint8_t type;
     struct node *args;
-    struct node *body;
+    struct node_list *body;
     struct symbol *sym;
+};
+
+struct node_symref {
+    uint8_t type;
+    struct symbol *sym;
+};
+
+struct node_list {
+    uint8_t type;
+    struct array_list ary;
 };
 
 struct node *
 node_proc_new(struct symbol *sym, struct node *n);
 
-/* FIXME: body should be node_list */
 void
 node_proc_body(struct node *proc, struct node *body);
+
+struct node *
+node_symref_new(struct symbol *sym);
+
+struct node *
+node_list_new(void);
+
+void
+node_list_add(struct node *list, struct node *el);
+
+int
+node_cmp(const void *xa, const void *xb);
+
+void
+node_free(void *n);
 
 #endif /* NODE_H */

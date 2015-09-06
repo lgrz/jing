@@ -30,4 +30,7 @@ struct symbol {
 struct symbol *
 symtab_lookup(char *name);
 
+void
+symtab_free(struct symbol *sym);
+
 #endif /* SYMTAB_H */

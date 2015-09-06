@@ -38,12 +38,27 @@ void
 emitter_walk_stub(struct node *top, FILE *stream)
 {
     if (NODE_PROC == top->type) {
+        size_t i, len = 0;
         struct node_proc *proc = (struct node_proc *)top;
-        fprintf(stream, "proc(%s, []).\n", proc->sym->name);
 
-        free(proc->sym->name);
-        free(proc->sym);
-        free(proc);
+        fprintf(stream, "proc(%s, [", proc->sym->name);
+
+        if (proc->body) {
+            len = proc->body->ary.size;
+        }
+
+        for (i = 0; i < len; ++i) {
+            struct node_symref *ref;
+
+            ref = (struct node_symref *)proc->body->ary.data[i];
+            fprintf(stream, "%s", ref->sym->name);
+
+            if (i < len - 1) {
+                fprintf(stream, ", ");
+            }
+        }
+
+        fprintf(stream, "]).\n");
     }
 }
 
@@ -62,11 +77,12 @@ main(int argc, char **argv)
     }
 
     yyparse();
-
-    yylex_destroy();
+    /* must be called before `yylex_destroy` */
     fclose(yyin);
+    yylex_destroy();
 
     emitter_walk_stub(ntop, stdout);
+    node_free(ntop);
 
     return 0;
 }
