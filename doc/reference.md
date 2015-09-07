@@ -12,6 +12,7 @@ conc
 else
 false
 fluent
+fun
 if
 interrupt
 iter
@@ -19,6 +20,8 @@ ndet
 pconc
 pick
 procedure
+prolog
+rel
 search
 skip
 true
@@ -116,11 +119,17 @@ xdcl = common_dcl
      | term ;
 
 common_dcl = action_dcl
-           | fluent_dcl ;
+           | rel_fluent_dcl
+           | fun_fluent_dcl
+           | prolog_dcl ;
 
-action_dcl = 'action', name, '(', arg_list_r, ')' ;
+action_dcl = 'action', name, ':', number ;
 
-fluent_dcl = 'fluent', name, '(', arg_list_r, ')' ;
+rel_fluent_dcl = 'rel', 'fluent', name, ':', number ;
+
+fun_fluent_dcl = 'fun' 'fluent', name, ':', number ;
+
+prolog_dcl = 'prolog', name, ':', number ;
 
 xproc_dcl = proc_dcl, compound_stmt ;
 

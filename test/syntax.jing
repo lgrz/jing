@@ -11,14 +11,15 @@
 ;;
 ;;;
 
-action up(a);
-action up(a, b);
+action up: 0;
+action down: 2;
 
-fluent floor(a);
-fluent floor(a, b);
+fun fluent floor: 1;
+rel fluent foo: 2;
+
+prolog member: 2;
 
 procedure foo() {}
-// https://github.com/lstat/jing/issues/2#issuecomment-136232241
 procedure foo(a) {}
 procedure foo(a, b, c) {}
 
@@ -29,8 +30,8 @@ procedure foo() {
         ;
     }
     // semantics: action, fluent not allowed here
-    action boo(q);
-    fluent boo(q);
+    action new_act: 1;
+    rel fluent new_fluent: 0;
 
     // error: procedures can't be nested
     // procedure bar(f) {}

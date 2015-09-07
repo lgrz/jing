@@ -18,6 +18,7 @@
 
 %%
 
+":" |
 "~" |
 "." |
 "?" |
@@ -45,7 +46,10 @@
 "citer"     { return LCITER; }
 "while"     { return LWHILE; }
 "search"    { return LSEARCH; }
+"prolog"    { return LPROLOG; }
 "action"    { return LACTION; }
+"fun"       { return LFUN; }
+"rel"       { return LREL; }
 "fluent"    { return LFLUENT; }
 "interrupt" { return LINTERRUPT; }
 "procedure" { return LPROCEDURE; }

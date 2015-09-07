@@ -21,6 +21,7 @@ yylex(void);
 
 %token LACTION
        LFLUENT
+       LPROLOG
        LIF
        LELSE
        LWHILE
@@ -37,6 +38,8 @@ yylex(void);
        LPCONC
        LOROR
        LANDAND
+       LREL
+       LFUN
 
 %token LNUMBER
        LNAME
@@ -209,15 +212,27 @@ xdcl: common_dcl
 common_dcl: action_dcl
             {
             }
-          | fluent_dcl
+          | rel_fluent_dcl
+            {
+            }
+          | fun_fluent_dcl
+            {
+            }
+          | prolog_dcl
             {
             }
 ;
 
-action_dcl: LACTION LNAME '(' arg_list_r ')'
+action_dcl: LACTION LNAME ':' LNUMBER
 ;
 
-fluent_dcl: LFLUENT LNAME '(' arg_list_r ')'
+rel_fluent_dcl: LREL LFLUENT LNAME ':' LNUMBER
+;
+
+fun_fluent_dcl: LFUN LFLUENT LNAME ':' LNUMBER
+;
+
+prolog_dcl: LPROLOG LNAME ':' LNUMBER
 ;
 
 xproc_dcl: proc_dcl compound_stmt
