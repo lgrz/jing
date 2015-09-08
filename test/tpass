@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+
+# This file is a part of Jing.
+#
+# Copyright (c) 2015 The Jing Authors.
+#
+# For the full copyright and license information, please view the LICENSE file
+# that was distributed with this source code.
+
+import sys
+from subprocess import Popen, PIPE
+
+if len(sys.argv) < 3:
+    print "usage: pass_test <program> <file...>"
+    sys.exit(1)
+
+program = sys.argv[1]
+test_files = sys.argv[2:]
+passed = 0
+failed = 0
+
+for f in test_files:
+    cmd = [program, f]
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+    stdout, stderr = p.communicate()
+    if stderr == '' and 0 == p.returncode:
+        passed += 1
+        print "ok: %s passed" % f
+    else:
+        failed += 1
+        print "error: %s failed with exit code %d" % (f, p.returncode)
+        if len(stderr):
+            print "stderr:"
+            print stderr
+
+print "Tests: %d, Passed: %d, Failed: %d" % (len(test_files), passed, failed)

@@ -1,0 +1,63 @@
+#!/usr/bin/env python
+
+# This file is a part of Jing.
+#
+# Copyright (c) 2015 The Jing Authors.
+#
+# For the full copyright and license information, please view the LICENSE file
+# that was distributed with this source code.
+
+import sys
+from subprocess import Popen, PIPE
+from collections import namedtuple
+
+Error = namedtuple('Error', 'error_str lineno')
+
+if len(sys.argv) < 3:
+    print "usage: fail_test <program> <file...>"
+    sys.exit(1)
+
+program = sys.argv[1]
+test_files = sys.argv[2:]
+passed = 0
+failed = 0
+err_prefix = "// ERROR "
+
+for file in test_files:
+    errors = []
+    with open(file, 'rb') as f:
+        for i, line in enumerate(f.readlines()):
+            idx = line.find(err_prefix)
+            if idx >= 0:
+                err = Error(line[idx+len(err_prefix):].strip(), i+1)
+                errors.append(err)
+
+    cmd = [program, file]
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+    stdout, stderr = p.communicate()
+
+    if 0 == p.returncode:
+        failed += 1
+        print "error: %s missing expected failure" % file
+    else:
+        unmatched = False
+        expected = stderr.strip().split('\n')
+        if len(expected) == len(errors):
+            for i, line in enumerate(expected):
+                if line.find("error: " + errors[i].error_str) < 0:
+                    unmatched = True
+                    print "error: %s unmatched error message" % file
+                    print "  expected: %s" % errors[i].error_str
+                    print "    actual: %s" % \
+                        line[line.find("error: ")+len("error: "):]
+            if unmatched:
+                failed += 1
+            else:
+                passed += 1
+                print "ok: %s passed" % file
+        else:
+            failed += 1
+            print "error: %s unmatched number of error messages" % file
+            print stderr
+
+print "Tests: %d, Passed: %d, Failed: %d" % (len(test_files), passed, failed)
