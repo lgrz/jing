@@ -48,7 +48,7 @@ yylex(void);
 %type <node> opt_xdcl_list xdcl_list_r xdcl
 %type <node> opt_stmt_list stmt_list_r
 %type <node> opt_arg_list
-%type <node> opt_var_list 
+%type <node> opt_var_list
 %type <node> xproc_dcl proc_dcl
 %type <node> if_stmt while_stmt iter_stmt citer_stmt
 %type <node> pick_stmt search_stmt interrupt_stmt
@@ -277,7 +277,7 @@ stmt_list_r: stmt
 ;
 
 var_list_r: var
-	  | var_list_r ',' var
+      | var_list_r ',' var
 ;
 
 var: LVARIABLE
@@ -311,13 +311,13 @@ opt_stmt_list:
 ;
 
 opt_var_list:
-		{
-		    $$ = NULL;
-		}
-	    | var_list_r
-		{ 
-		    $$ = NULL;
-		}
+        {
+            $$ = NULL;
+        }
+        | var_list_r
+        {
+            $$ = NULL;
+        }
 ;
 
 opt_arg_list:
