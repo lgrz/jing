@@ -14,6 +14,8 @@ int
 yylex(void);
 %}
 
+%error-verbose
+
 %union {
     struct node *node;
     struct symbol *sym;

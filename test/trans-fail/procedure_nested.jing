@@ -6,6 +6,6 @@
 // that was distributed with this source code.
 
 procedure outer() {
-    procedure nested() { // ERROR syntax error
+    procedure nested() { // ERROR syntax error, unexpected LPROCEDURE, expecting '}'
     }
 }
