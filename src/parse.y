@@ -47,7 +47,7 @@ yylex(void);
 
 %type <node> opt_xdcl_list xdcl_list_r xdcl
 %type <node> opt_stmt_list stmt_list_r
-%type <node> opt_arg_list
+%type <node> opt_arg_list var_list
 %type <node> xproc_dcl proc_dcl
 %type <node> if_stmt while_stmt iter_stmt citer_stmt
 %type <node> pick_stmt search_stmt interrupt_stmt
@@ -55,7 +55,7 @@ yylex(void);
 %type <node> psuedo_expr formula_expr
 %type <node> stmt common_dcl simple_stmt complex_stmt compound_stmt empty_stmt
 
-%type <sym> LNAME
+%type <sym> LNAME LVARIABLE
 
 %left LOROR
 %left LANDAND
