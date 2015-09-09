@@ -137,7 +137,7 @@ citer_stmt: LCITER compound_stmt
             }
 ;
 
-pick_stmt: LPICK '<' arg_list_r '>' compound_stmt
+pick_stmt: LPICK '<' var_list_r '>' compound_stmt
             {
             }
 ;
