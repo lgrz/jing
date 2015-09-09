@@ -37,6 +37,7 @@ Prolog variables.
 identifier = [a-z][a-zA-Z0-9_]* ;
 number = [0-9]+ ;
 name = identifier ;
+variable = [A-Z][a-zA-Z0-9_]* ;
 ```
 
 ## Grammar
@@ -82,7 +83,7 @@ iter_stmt = 'iter', compound_stmt ;
 
 citer_stmt = 'citer', compound_stmt ;
 
-pick_stmt = 'pick', '<', arg_list_r, '>', compound_stmt ;
+pick_stmt = 'pick', '<', var_list_r, '>', compound_stmt ;
 
 search_stmt = 'search', compound_stmt ;
 
@@ -133,13 +134,18 @@ prolog_dcl = 'prolog', name, ':', number ;
 
 xproc_dcl = proc_dcl, compound_stmt ;
 
-proc_dcl = 'procedure', name, '(', opt_arg_list, ')' ;
+proc_dcl = 'procedure', name, '(', opt_var_list, ')' ;
 
 xdcl_list_r = xdcl
             | xdcl_list_r, xdcl ;
 
 stmt_list_r = stmt
             | stmt_list_r, stmt ;
+
+var_list_r = var
+           | var_list_r, ',', var ;
+
+var: variable ;
 
 arg_list_r = arg
            | arg_list_r, ',', arg ;
@@ -151,6 +157,8 @@ delta_list = { delta_list, delta_item } ;
 opt_xdcl_list = { xdcl_list_r } ;
 
 opt_stmt_list = { stmt_list_r } ;
+
+opt_var_list = { var_list_r } ;
 
 opt_arg_list = { arg_list_r } ;
 
