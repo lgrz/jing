@@ -104,6 +104,10 @@ node_free(void *del)
 {
     struct node *n = (struct node *)del;
 
+    if (!n) {
+        return;
+    }
+
     switch (n->type) {
     case NODE_PROC:
         {

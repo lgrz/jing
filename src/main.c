@@ -37,7 +37,7 @@ yyerror(char *s, ...)
 void
 emitter_walk_stub(struct node *top, FILE *stream)
 {
-    if (NODE_PROC == top->type) {
+    if (top && NODE_PROC == top->type) {
         size_t i, len = 0;
         struct node_proc *proc = (struct node_proc *)top;
 
