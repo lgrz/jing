@@ -43,6 +43,7 @@ yylex(void);
 
 %token LNUMBER
        LNAME
+       LVARIABLE
 
 %type <node> opt_xdcl_list xdcl_list_r xdcl
 %type <node> opt_stmt_list stmt_list_r
@@ -242,7 +243,7 @@ xproc_dcl: proc_dcl compound_stmt
          }
 ;
 
-proc_dcl: LPROCEDURE LNAME '(' opt_arg_list ')'
+proc_dcl: LPROCEDURE LNAME '(' var_list ')'
         {
             $$ = node_proc_new($2, $4);
         }
@@ -272,6 +273,14 @@ stmt_list_r: stmt
                         node_list_add($$, $2);
                     }
                 }
+;
+
+var_list: /* empty */
+	  | var_list ',' var
+	  | var
+;
+
+var: LVARIABLE
 ;
 
 arg_list_r: arg
