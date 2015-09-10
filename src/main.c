@@ -65,6 +65,8 @@ emitter_walk_stub(struct node *top, FILE *stream)
 int
 main(int argc, char **argv)
 {
+    int ret = EXIT_SUCCESS;
+
     if (2 != argc) {
         fprintf(stderr, "todo usage\n");
         exit(EXIT_FAILURE);
@@ -81,8 +83,12 @@ main(int argc, char **argv)
     fclose(yyin);
     yylex_destroy();
 
+    if (yynerrs) {
+        ret = EXIT_FAILURE;
+    }
+
     emitter_walk_stub(ntop, stdout);
     node_free(ntop);
 
-    return 0;
+    return ret;
 }

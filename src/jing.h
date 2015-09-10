@@ -25,6 +25,9 @@ extern int
 yylineno;
 
 extern int
+yynerrs;
+
+extern int
 yyparse(void);
 
 extern int
