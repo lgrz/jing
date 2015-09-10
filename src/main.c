@@ -68,7 +68,7 @@ main(int argc, char **argv)
     int ret = EXIT_SUCCESS;
 
     if (2 != argc) {
-        fprintf(stderr, "todo usage\n");
+        fprintf(stderr, "usage: jing2indigo file.jing\n");
         exit(EXIT_FAILURE);
     }
 
