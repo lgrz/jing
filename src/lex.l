@@ -57,7 +57,7 @@
 [a-z][a-zA-Z0-9_]* { yylval.sym = symtab_lookup(yytext); return LNAME; }
 [A-Z][a-zA-Z0-9_]* { yylval.sym = symtab_lookup(yytext); return LVARIABLE; }
 
-[0-9]+  { return LNUMBER; }
+[0-9]+  { yylval.num = atoi(yytext); return LNUMBER; }
 
 "//".*
 [ \t\n]

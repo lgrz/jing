@@ -72,6 +72,24 @@ node_list_add(struct node *n, struct node *el)
 }
 
 /*
+ * Create a common declaration, one of `action`, `fluent`, `prolog`.
+ */
+struct node *
+node_comdcl_new(enum type stype, struct symbol *sym, uint8_t arity)
+{
+    struct node_comdcl *dcl = bmalloc(sizeof(*dcl));
+
+    dcl->type = NODE_COMDCL;
+    dcl->arity = arity;
+    dcl->sym = sym;
+
+    symtab_set_type(sym, stype);
+    symtab_set_def(sym, (struct node *)dcl);
+
+    return (struct node *)dcl;
+}
+
+/*
  * Compare node `xa` to `xb`.
  */
 int
@@ -113,6 +131,7 @@ node_free(void *del)
         }
         break;
     case NODE_SYMREF:
+    case NODE_COMDCL:
         /* unused */
         break;
     case NODE_NIL:

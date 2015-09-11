@@ -5,12 +5,4 @@
 // For the full copyright and license information, please view the LICENSE file
 // that was distributed with this source code.
 
-action up: 0;
-action down: 0;
-action halt: 0;
-
-procedure go_up() {
-    up;
-    down;
-    halt;
-}
+action foo: 0;

@@ -19,6 +19,7 @@ yylex(void);
 %union {
     struct node *node;
     struct symbol *sym;
+    int num;
 }
 
 %token LACTION
@@ -52,6 +53,7 @@ yylex(void);
 %type <node> opt_arg_list
 %type <node> opt_var_list
 %type <node> xproc_dcl proc_dcl
+%type <node> action_dcl
 %type <node> if_stmt while_stmt iter_stmt citer_stmt
 %type <node> pick_stmt search_stmt interrupt_stmt
 %type <node> ndet_stmt conc_stmt pconc_stmt
@@ -59,6 +61,7 @@ yylex(void);
 %type <node> stmt common_dcl simple_stmt complex_stmt compound_stmt empty_stmt
 
 %type <sym> LNAME LVARIABLE
+%type <num> LNUMBER
 
 %left LOROR
 %left LANDAND
@@ -207,14 +210,17 @@ psuedo_expr: LNAME
 xdcl: common_dcl
     | xproc_dcl
         {
+            $$ = $1;
         }
     | term
         {
+            $$ = NULL;
         }
 ;
 
 common_dcl: action_dcl
             {
+                $$ = $1;
             }
           | rel_fluent_dcl
             {
@@ -228,6 +234,9 @@ common_dcl: action_dcl
 ;
 
 action_dcl: LACTION LNAME ':' LNUMBER
+            {
+                $$ = node_comdcl_new(TACTION, $2, $4);
+            }
 ;
 
 rel_fluent_dcl: LREL LFLUENT LNAME ':' LNUMBER
@@ -255,9 +264,17 @@ proc_dcl: LPROCEDURE LNAME '(' opt_var_list ')'
 /* lists */
 xdcl_list_r: xdcl
                 {
+                    $$ = node_list_new();
+                    if (NULL != $1) {
+                        node_list_add($$, $1);
+                    }
                 }
            | xdcl_list_r xdcl
                 {
+                    $$ = $1;
+                    if (NULL != $2) {
+                        node_list_add($$, $2);
+                    }
                 }
 ;
 
@@ -299,10 +316,9 @@ delta_list:
 /* optional */
 opt_xdcl_list:
                  {
+                    $$ = NULL;
                  }
              | xdcl_list_r
-                {
-                }
 ;
 
 opt_stmt_list:
