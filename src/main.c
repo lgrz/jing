@@ -37,28 +37,36 @@ yyerror(char *s, ...)
 void
 emitter_walk_stub(struct node *top, FILE *stream)
 {
-    if (top && NODE_PROC == top->type) {
-        size_t i, len = 0;
-        struct node_proc *proc = (struct node_proc *)top;
+    if (top && NODE_LIST == top->type) {
+        struct node_list *list = (struct node_list *)top;
+        size_t i, j;
 
-        fprintf(stream, "proc(%s, [", proc->sym->name);
+        for (i = 0; i < list->ary.size; ++i) {
+            struct node *n = (struct node *)list->ary.data[i];
 
-        if (proc->body) {
-            len = proc->body->ary.size;
-        }
+            /* just handle proc case for now */
+            if (n && NODE_PROC == n->type) {
+                size_t len = 0;
+                struct node_proc *proc = (struct node_proc *)n;
 
-        for (i = 0; i < len; ++i) {
-            struct node_symref *ref;
+                fprintf(stream, "proc(%s, [", proc->sym->name);
+                if (proc->body) {
+                    len = proc->body->ary.size;
+                }
 
-            ref = (struct node_symref *)proc->body->ary.data[i];
-            fprintf(stream, "%s", ref->sym->name);
+                for (j = 0; j < len; ++j) {
+                    /* can get away with only `node_symref` for now */
+                    struct node_symref *ref;
 
-            if (i < len - 1) {
-                fprintf(stream, ", ");
+                    ref = (struct node_symref *)proc->body->ary.data[j];
+                    fprintf(stream, "%s", ref->sym->name);
+                    if (j < len - 1) {
+                        fprintf(stream, ", ");
+                    }
+                }
+                fprintf(stream, "]).\n");
             }
         }
-
-        fprintf(stream, "]).\n");
     }
 }
 
