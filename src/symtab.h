@@ -15,6 +15,7 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "type.h"
 #include "util.h"
 
 #define NHASH 1021
@@ -25,6 +26,7 @@ struct symbol {
     struct symbol *next;
     char *name;
     struct node *def;
+    enum type type;
 };
 
 struct symbol *
@@ -32,5 +34,11 @@ symtab_lookup(char *name);
 
 void
 symtab_free(void);
+
+void
+symtab_set_type(struct symbol *sym, enum type stype);
+
+void
+symtab_set_def(struct symbol *sym, struct node *n);
 
 #endif /* SYMTAB_H */

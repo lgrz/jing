@@ -17,16 +17,13 @@ TEST_GROUP(symtab)
 {
 };
 
-TEST(symtab, can_empty_and_reuse_bucket)
+TEST(symtab, new_symbol_has_undefined_type)
 {
     struct symbol *sym;
 
-    sym = symtab_lookup((char *)"one");
-    symtab_free(sym);
-    sym = symtab_lookup((char *)"one");
+    sym = symtab_lookup((char *)"dummy");
 
-    // when the bucket is emptied it should be set back to NULL
-    CHECK(NULL == sym->next);
+    CHECK(TNONE == sym->type);
 
     symtab_free();
 }

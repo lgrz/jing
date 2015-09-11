@@ -53,6 +53,7 @@ symtab_lookup(char *name)
     sym->name = bmalloc(sizeof(name) + 1);
     strcpy(sym->name, name);
     sym->def = NULL;
+    sym->type = TNONE;
 
     sym->next = symtab[key];
     symtab[key] = sym;
@@ -82,4 +83,26 @@ symtab_free(void)
             free(sym);
         }
     }
+}
+
+/*
+ * Set a symbol's type
+ *
+ * Avoids circular dependencies between `node` and `symtab`.
+ */
+void
+symtab_set_type(struct symbol *sym, enum type stype)
+{
+    sym->type = stype;
+}
+
+/*
+ * Set a symbol's definition node.
+ *
+ * Avoids circular dependencies between `node` and `symtab`.
+ */
+void
+symtab_set_def(struct symbol *sym, struct node *n)
+{
+    sym->def = n;
 }
