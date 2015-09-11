@@ -97,6 +97,7 @@ main(int argc, char **argv)
 
     emitter_walk_stub(ntop, stdout);
     node_free(ntop);
+    symtab_free();
 
     return ret;
 }

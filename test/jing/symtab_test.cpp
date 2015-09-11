@@ -28,5 +28,5 @@ TEST(symtab, can_empty_and_reuse_bucket)
     // when the bucket is emptied it should be set back to NULL
     CHECK(NULL == sym->next);
 
-    symtab_free(sym);
+    symtab_free();
 }

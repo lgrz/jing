@@ -10,17 +10,6 @@
 #include "node.h"
 
 /*
- * A wrapper around `symtab_free`.
- */
-static void
-sym_free(struct symbol *sym)
-{
-    extern void symtab_free(struct symbol *);
-
-    symtab_free(sym);
-}
-
-/*
  * Create a `procedure` node.
  */
 struct node *
@@ -115,13 +104,6 @@ node_free(void *del)
             if (proc->body) {
                 node_free(proc->body);
             }
-            sym_free(proc->sym);
-        }
-        break;
-    case NODE_SYMREF:
-        {
-            struct node_symref *ref = (struct node_symref *)n;
-            sym_free(ref->sym);
         }
         break;
     case NODE_LIST:
@@ -129,6 +111,9 @@ node_free(void *del)
             struct node_list *list = (struct node_list *)n;
             array_destroy(&(list->ary));
         }
+        break;
+    case NODE_SYMREF:
+        /* unused */
         break;
     case NODE_NIL:
     default:
