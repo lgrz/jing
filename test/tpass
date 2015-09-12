@@ -33,4 +33,9 @@ for f in test_files:
             print "stderr:"
             print stderr
 
+if failed:
+    print "\033[31m"
+else:
+    print "\033[32m"
 print "Tests: %d, Passed: %d, Failed: %d" % (len(test_files), passed, failed)
+print "\033[0m"

@@ -38,7 +38,7 @@ for file in test_files:
 
     if 0 == p.returncode:
         failed += 1
-        print "error: %s missing expected failure" % file
+        print "error: %s missing expected failure (exit success)" % file
     else:
         unmatched = False
         expected = stderr.strip().split('\n')
@@ -60,4 +60,9 @@ for file in test_files:
             print "error: %s unmatched number of error messages" % file
             print stderr
 
+if failed:
+    print "\033[31m"
+else:
+    print "\033[32m"
 print "Tests: %d, Passed: %d, Failed: %d" % (len(test_files), passed, failed)
+print "\033[0m"
