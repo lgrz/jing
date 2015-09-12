@@ -36,4 +36,7 @@ yylex_destroy(void);
 void
 yyerror(char *s, ...);
 
+extern int
+error_exit(void);
+
 #endif /* JING_H */

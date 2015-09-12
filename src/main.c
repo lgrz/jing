@@ -13,6 +13,7 @@
 
 #include "jing.h"
 #include "emitter.h"
+#include "semcheck.h"
 
 /* AST root node */
 struct node *
@@ -52,53 +53,6 @@ error_exit(void)
     exit(EXIT_FAILURE);
 }
 
-/*
- * Stub out semantic analysis.
- */
-void
-semcheck_stub(struct node *top)
-{
-    if (top && NODE_LIST == top->type) {
-        struct node_list *list = (struct node_list *)top;
-        size_t i, j;
-
-        for (i = 0; i < list->ary.size; ++i) {
-            struct node *n = (struct node *)list->ary.data[i];
-
-            /* just handle proc case for now */
-            if (n && NODE_PROC == n->type) {
-                size_t len = 0;
-                struct node_proc *proc = (struct node_proc *)n;
-
-                if (proc->body) {
-                    len = proc->body->ary.size;
-                }
-
-                for (j = 0; j < len; ++j) {
-                    /* can get away with only `node_symref` for now */
-                    struct node_symref *ref;
-
-                    ref = (struct node_symref *)proc->body->ary.data[j];
-
-                    /* skip everything but `NODE_SYMREF` for now */
-                    if (NODE_SYMREF != ref->type) {
-                        continue;
-                    }
-
-                    if (TACTION != ref->sym->type) {
-                        /*
-                         * FIXME: convert `sym->type` to human readable form
-                         * FIXME: lineno info is incorrect
-                         */
-                        yyerror("expected action, found `%d`", ref->sym->type);
-                        error_exit();
-                    }
-                }
-            }
-        }
-    }
-}
-
 int
 main(int argc, char **argv)
 {
@@ -124,7 +78,7 @@ main(int argc, char **argv)
         ret = EXIT_FAILURE;
     }
 
-    semcheck_stub(ntop);
+    semcheck_walk(ntop);
     emitter_init(stdout);
     emitter_walk(ntop);
     jing_destroy();
