@@ -1,0 +1,28 @@
+action pour_glass: 0;
+action drink: 0;
+action destroy_glass: 0;
+action check_this: 0;
+action check_that: 0;
+action goodbye: 0;
+action find_nemo: 0;
+action find_wally: 0;
+action found: 0;
+
+
+procedure drink_water() {
+    iter {
+        pour_glass;
+        drink;
+        destroy_glass;
+    }
+    citer {
+        check_this;
+        check_that;
+        goodbye;
+    }
+    search {
+        find_nemo;
+        find_wally;
+        found;
+    }
+}

@@ -98,19 +98,17 @@ node_comdcl_new(enum type stype, struct symbol *sym, uint8_t arity)
 }
 
 /*
- * Create a search node. Contains a list of statements.
+ * A common statement: 'search', 'iter', 'citer'
  */
 struct node *
-node_search_new(struct node *body)
+node_comstmt_new(enum node_type type, struct node *body)
 {
-    struct node_search *search = bmalloc(sizeof(*search));
-    search->type = NODE_SEARCH;
+    struct node_comstmt *stmt = bmalloc(sizeof(*stmt));
 
-    if (body) {
-        search->body = (struct node_list *)body;
-    }
+    stmt->type = type;
+    stmt->body = (struct node_list *)body;
 
-    return (struct node *)search;
+    return (struct node *)stmt;
 }
 
 /*
@@ -255,11 +253,13 @@ node_free(void *del)
             }
         }
         break;
+    case NODE_ITER:
+    case NODE_CITER:
     case NODE_SEARCH:
         {
-            struct node_search *search = (struct node_search *)n;
-            if (search->body) {
-                node_free(search->body);
+            struct node_comstmt *stmt = (struct node_comstmt *)n;
+            if (stmt->body) {
+                node_free(stmt->body);
             }
         }
         break;
@@ -282,7 +282,7 @@ node_free(void *del)
         break;
     case NODE_NIL:
     default:
-        fprintf(stderr, "node_free: type error\n");
+        fprintf(stderr, "node_free: type error %d \n", n->type);
     }
 
     free(n);

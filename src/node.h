@@ -42,7 +42,9 @@ enum node_type {
     NODE_IF,
     NODE_VAL,
     NODE_INTERRUPT,
-    NODE_WHILE
+    NODE_WHILE,
+    NODE_ITER,
+    NODE_CITER
 };
 
 struct node {
@@ -74,7 +76,7 @@ struct node_comdcl {
     struct symbol *sym;
 };
 
-struct node_search {
+struct node_comstmt {
     uint8_t type;
     struct node_list *body;
 };
@@ -112,7 +114,7 @@ struct node *
 node_comdcl_new(enum type stype, struct symbol *sym, uint8_t arity);
 
 struct node *
-node_search_new(struct node *body);
+node_comstmt_new(enum node_type type, struct node *body);
 
 struct node *
 node_if_new(struct node *cond, struct node *then, struct node *elseif_list,

@@ -59,9 +59,6 @@ emitter_gen_node(struct node *n)
     case NODE_SYMREF:
         emitter_gen_symref((struct node_symref *)n);
         break;
-    case NODE_SEARCH:
-        emitter_gen_search((struct node_search *)n);
-        break;
     case NODE_COMDCL:
         /* unused */
         break;
@@ -74,6 +71,18 @@ emitter_gen_node(struct node *n)
     case NODE_INTERRUPT:
     case NODE_WHILE:
         emitter_gen_cond_block((struct node_cond_block *)n);
+        break;
+    case NODE_ITER:
+        fprintf(stream, "star(");
+        emitter_gen_comstmt((struct node_comstmt *)n);
+        break;
+    case NODE_CITER:
+        fprintf(stream, "iconc(");
+        emitter_gen_comstmt((struct node_comstmt *)n);
+        break;
+    case NODE_SEARCH:
+        fprintf(stream, "search(");
+        emitter_gen_comstmt((struct node_comstmt *)n);
         break;
     case NODE_NIL:
     default:
@@ -142,17 +151,13 @@ emitter_gen_symref(struct node_symref *ref)
     fprintf(stream, "%s", ref->sym->name);
 }
 
-/*
- * Generate a `search` block.
- */
 void
-emitter_gen_search(struct node_search *search)
+emitter_gen_comstmt(struct node_comstmt *stmt)
 {
-    assert(search);
+    assert(stmt);
 
-    fprintf(stream, "search(");
-    if (search->body) {
-        emitter_gen_node((struct node *)search->body);
+    if (stmt->body) {
+        emitter_gen_node((struct node *)stmt->body);
     } else {
         fprintf(stream, "[]");
     }

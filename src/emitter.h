@@ -37,7 +37,7 @@ void
 emitter_gen_symref(struct node_symref *ref);
 
 void
-emitter_gen_search(struct node_search *search);
+emitter_gen_comstmt(struct node_comstmt *stmt);
 
 void
 emitter_gen_if(struct node_if *nif);
