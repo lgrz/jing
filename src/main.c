@@ -23,7 +23,7 @@ static char *
 infile = NULL;
 
 void
-yyerror(char *s, ...)
+yyerror(const char *s, ...)
 {
     va_list ap;
 

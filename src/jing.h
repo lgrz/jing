@@ -34,7 +34,7 @@ extern int
 yylex_destroy(void);
 
 void
-yyerror(char *s, ...);
+yyerror(const char *s, ...);
 
 extern int
 error_exit(void);
