@@ -90,6 +90,22 @@ node_comdcl_new(enum type stype, struct symbol *sym, uint8_t arity)
 }
 
 /*
+ * Create a search node. Contains a list of statements.
+ */
+struct node *
+node_search_new(struct node *body)
+{
+    struct node_search *search = bmalloc(sizeof(*search));
+    search->type = NODE_SEARCH;
+
+    if (body) {
+        search->body = (struct node_list *)body;
+    }
+
+    return (struct node *)search;
+}
+
+/*
  * Compare node `xa` to `xb`.
  */
 int
@@ -133,6 +149,14 @@ node_free(void *del)
     case NODE_SYMREF:
     case NODE_COMDCL:
         /* unused */
+        break;
+    case NODE_SEARCH:
+        {
+            struct node_search *search = (struct node_search *)n;
+            if (search->body) {
+                node_free(search->body);
+            }
+        }
         break;
     case NODE_NIL:
     default:

@@ -6,7 +6,7 @@ CC = gcc
 CFLAGS += -Wall -Wextra -pedantic -O0 -DYYDEBUG=1 -g -Isrc
 LDFLAGS +=
 
-SRC = src/main.c src/node.c src/symtab.c src/util.c src/array.c
+SRC = src/main.c src/node.c src/symtab.c src/util.c src/array.c src/emitter.c
 OBJ := $(SRC:.c=.o) src/parse.o
 DEP := $(patsubst %.c,%.d,$(SRC)) src/parse.d
 

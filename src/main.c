@@ -12,6 +12,7 @@
 #include <stdarg.h>
 
 #include "jing.h"
+#include "emitter.h"
 
 /* AST root node */
 struct node *
@@ -78,6 +79,12 @@ semcheck_stub(struct node *top)
                     struct node_symref *ref;
 
                     ref = (struct node_symref *)proc->body->ary.data[j];
+
+                    /* skip everything but `NODE_SYMREF` for now */
+                    if (NODE_SYMREF != ref->type) {
+                        continue;
+                    }
+
                     if (TACTION != ref->sym->type) {
                         /*
                          * FIXME: convert `sym->type` to human readable form
@@ -87,45 +94,6 @@ semcheck_stub(struct node *top)
                         error_exit();
                     }
                 }
-            }
-        }
-    }
-}
-
-/*
- * Stub out the emitter module.
- */
-void
-emitter_walk_stub(struct node *top, FILE *stream)
-{
-    if (top && NODE_LIST == top->type) {
-        struct node_list *list = (struct node_list *)top;
-        size_t i, j;
-
-        for (i = 0; i < list->ary.size; ++i) {
-            struct node *n = (struct node *)list->ary.data[i];
-
-            /* just handle proc case for now */
-            if (n && NODE_PROC == n->type) {
-                size_t len = 0;
-                struct node_proc *proc = (struct node_proc *)n;
-
-                fprintf(stream, "proc(%s, [", proc->sym->name);
-                if (proc->body) {
-                    len = proc->body->ary.size;
-                }
-
-                for (j = 0; j < len; ++j) {
-                    /* can get away with only `node_symref` for now */
-                    struct node_symref *ref;
-
-                    ref = (struct node_symref *)proc->body->ary.data[j];
-                    fprintf(stream, "%s", ref->sym->name);
-                    if (j < len - 1) {
-                        fprintf(stream, ", ");
-                    }
-                }
-                fprintf(stream, "]).\n");
             }
         }
     }
@@ -157,7 +125,8 @@ main(int argc, char **argv)
     }
 
     semcheck_stub(ntop);
-    emitter_walk_stub(ntop, stdout);
+    emitter_init(stdout);
+    emitter_walk(ntop);
     jing_destroy();
 
     return ret;

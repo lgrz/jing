@@ -25,7 +25,8 @@ enum node_type {
     NODE_PROC,
     NODE_SYMREF,
     NODE_LIST,
-    NODE_COMDCL
+    NODE_COMDCL,
+    NODE_SEARCH
 };
 
 struct node {
@@ -57,6 +58,11 @@ struct node_comdcl {
     struct symbol *sym;
 };
 
+struct node_search {
+    uint8_t type;
+    struct node_list *body;
+};
+
 struct node *
 node_proc_new(struct symbol *sym, struct node *n);
 
@@ -74,6 +80,9 @@ node_list_add(struct node *list, struct node *el);
 
 struct node *
 node_comdcl_new(enum type stype, struct symbol *sym, uint8_t arity);
+
+struct node *
+node_search_new(struct node *body);
 
 int
 node_cmp(const void *xa, const void *xb);

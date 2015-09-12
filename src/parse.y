@@ -149,6 +149,7 @@ pick_stmt: LPICK '<' var_list_r '>' compound_stmt
 
 search_stmt: LSEARCH compound_stmt
             {
+                $$ = node_search_new($2);
             }
 ;
 
