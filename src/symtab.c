@@ -82,6 +82,7 @@ symtab_free(void)
             free(sym->name);
             free(sym);
         }
+        symtab[i] = NULL;
     }
 }
 
