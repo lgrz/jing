@@ -146,6 +146,7 @@ else:
 
 while_stmt: LWHILE '(' expr ')' compound_stmt
             {
+                $$ = node_while_new($3, $5);
             }
 ;
 

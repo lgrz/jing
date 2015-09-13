@@ -128,12 +128,35 @@ node_if_new(struct node *cond, struct node *then, struct node *elseif_list,
 struct node *
 node_interrupt_new(struct node *cond, struct node *body)
 {
-    struct node_interrupt *interrupt = bmalloc(sizeof(*interrupt));
+    struct node_cond_block *interrupt = node_cond_block_new(cond, body);
     interrupt->type = NODE_INTERRUPT;
-    interrupt->cond = cond;
-    interrupt->body = (struct node_list *)body;
 
     return (struct node *)interrupt;
+}
+
+/*
+ * Create a `while` node.
+ */
+struct node *
+node_while_new(struct node *cond, struct node *body)
+{
+    struct node_cond_block *nwhile = node_cond_block_new(cond, body);
+    nwhile->type = NODE_WHILE;
+
+    return (struct node *)nwhile;
+}
+
+/*
+ * Create a node with a condition and a block of code.
+ */
+struct node_cond_block *
+node_cond_block_new(struct node *cond, struct node *body)
+{
+    struct node_cond_block *cond_block = bmalloc(sizeof(*cond_block));
+    cond_block->cond = cond;
+    cond_block->body = (struct node_list *)body;
+
+    return cond_block;
 }
 
 /*
@@ -237,10 +260,11 @@ node_free(void *del)
         }
         break;
     case NODE_INTERRUPT:
+    case NODE_WHILE:
         {
-            struct node_interrupt *interrupt = (struct node_interrupt *)n;
-            node_free(interrupt->cond);
-            node_free(interrupt->body);
+            struct node_cond_block *cond_block = (struct node_cond_block *)n;
+            node_free(cond_block->cond);
+            node_free(cond_block->body);
         }
         break;
     case NODE_NIL:

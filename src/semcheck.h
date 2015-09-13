@@ -42,6 +42,6 @@ void
 semcheck_chk_if(struct node_if *nif);
 
 void
-semcheck_chk_interrupt(struct node_interrupt *interrupt);
+semcheck_chk_cond_block(struct node_cond_block *cond_block);
 
 #endif /* SEMCHECK_H */

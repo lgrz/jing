@@ -46,6 +46,6 @@ void
 emitter_gen_value(struct node *nval);
 
 void
-emitter_gen_interrupt(struct node_interrupt *interrupt);
+emitter_gen_cond_block(struct node_cond_block *cond_block);
 
 #endif /* EMITTER_H */

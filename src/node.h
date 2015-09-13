@@ -40,7 +40,8 @@ enum node_type {
     NODE_SEARCH,
     NODE_IF,
     NODE_VAL,
-    NODE_INTERRUPT
+    NODE_INTERRUPT,
+    NODE_WHILE
 };
 
 struct node {
@@ -84,7 +85,7 @@ struct node_if {
     struct node_list *alt;
 };
 
-struct node_interrupt {
+struct node_cond_block {
     uint8_t type;
     struct node *cond;
     struct node_list *body;
@@ -117,6 +118,12 @@ node_if_new(struct node *cond, struct node *then, struct node *elseif_list,
 
 struct node *
 node_interrupt_new(struct node *cond, struct node *body);
+
+struct node *
+node_while_new(struct node *cond, struct node *body);
+
+struct node_cond_block *
+node_cond_block_new(struct node *cond, struct node *body);
 
 struct node *
 node_get_true(void);

@@ -72,7 +72,8 @@ emitter_gen_node(struct node *n)
         emitter_gen_value(n);
         break;
     case NODE_INTERRUPT:
-        emitter_gen_interrupt((struct node_interrupt *)n);
+    case NODE_WHILE:
+        emitter_gen_cond_block((struct node_cond_block *)n);
         break;
     case NODE_NIL:
     default:
@@ -214,18 +215,22 @@ emitter_gen_value(struct node *nval)
 }
 
 /*
- * Generate an `interrupt` block.
+ * Generate an `while` or `interrupt` block.
  */
 void
-emitter_gen_interrupt(struct node_interrupt *interrupt)
+emitter_gen_cond_block(struct node_cond_block *cond_block)
 {
-    assert(interrupt);
-    assert(interrupt->cond);
-    assert(interrupt->body);
+    assert(cond_block);
+    assert(cond_block->cond);
+    assert(cond_block->body);
 
-    fprintf(stream, "interrupt(");
-    emitter_gen_node(interrupt->cond);
+    if (NODE_WHILE == cond_block->type) {
+        fprintf(stream, "while(");
+    } else {
+        fprintf(stream, "interrupt(");
+    }
+    emitter_gen_node(cond_block->cond);
     fprintf(stream, ", ");
-    emitter_gen_list(interrupt->body, false);
+    emitter_gen_list(cond_block->body, false);
     fputc(')', stream);
 }

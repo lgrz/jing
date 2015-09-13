@@ -68,7 +68,8 @@ semcheck_chk_node(struct node *n)
         semcheck_chk_if((struct node_if *)n);
         break;
     case NODE_INTERRUPT:
-        semcheck_chk_interrupt((struct node_interrupt *)n);
+    case NODE_WHILE:
+        semcheck_chk_cond_block((struct node_cond_block *)n);
         break;
     case NODE_NIL:
     default:
@@ -177,15 +178,15 @@ semcheck_chk_if(struct node_if *nif)
 }
 
 /*
- * Check an `interrupt`.
+ * Check node that has a conditional and a block of code.
  */
 void
-semcheck_chk_interrupt(struct node_interrupt *interrupt)
+semcheck_chk_cond_block(struct node_cond_block *cond_block)
 {
-    assert(interrupt);
-    assert(interrupt->cond);
-    assert(interrupt->body);
+    assert(cond_block);
+    assert(cond_block->cond);
+    assert(cond_block->body);
 
-    /* FIXME: semcheck `interrupt->cond` */
-    semcheck_chk_list(interrupt->body);
+    /* FIXME: semcheck `cond_block->cond` */
+    semcheck_chk_list(cond_block->body);
 }
