@@ -5,6 +5,13 @@
 // For the full copyright and license information, please view the LICENSE file
 // that was distributed with this source code.
 
+// EXPECTED OUTPUT
+// proc(go_up, [up]).
+// proc(go_down, [down]).
+// proc(go_left, [left]).
+// proc(go_right, [right]).
+// proc(full_circle, [up, down, left, right]).
+
 action up: 0;
 action down: 0;
 action left: 0;

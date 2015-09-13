@@ -19,11 +19,29 @@ test_files = sys.argv[2:]
 passed = 0
 failed = 0
 
+def get_expected_output(test_file):
+    begin = False
+    expected_str = ""
+    with open(test_file, 'rb') as f:
+        for i, line in enumerate(f.readlines()):
+            if not begin:
+                idx = line.find("// EXPECTED OUTPUT")
+                if idx >= 0:
+                    begin = True
+            else:
+                idx = line.find("// ")
+                if idx >= 0:
+                    expected_str += line[idx+3:]
+                else:
+                    break
+    return expected_str
+
 for f in test_files:
+    expected_output = get_expected_output(f)
     cmd = [program, f]
     p = Popen(cmd, stdout=PIPE, stderr=PIPE)
     stdout, stderr = p.communicate()
-    if stderr == '' and 0 == p.returncode:
+    if expected_output == stdout and stderr == '' and 0 == p.returncode:
         passed += 1
         print "ok: %s passed" % f
     else:
@@ -32,6 +50,11 @@ for f in test_files:
         if len(stderr):
             print "stderr:"
             print stderr
+            print ""
+        print "expected:"
+        print expected_output
+        print "actual:"
+        print stdout
 
 if failed:
     print "\033[31m"
