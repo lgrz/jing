@@ -172,9 +172,13 @@ search_stmt: LSEARCH compound_stmt
 
 interrupt_stmt: LINTERRUPT '(' expr ')' compound_stmt
                 {
+                    $$ = node_interrupt_new($3, $5);
                 }
               | LINTERRUPT '(' expr ')' psuedo_expr
                 {
+                    struct node *list = node_list_new();
+                    node_list_add(list, $5);
+                    $$ = node_interrupt_new($3, list);
                 }
 ;
 

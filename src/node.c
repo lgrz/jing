@@ -123,6 +123,20 @@ node_if_new(struct node *cond, struct node *then, struct node *elseif_list,
 }
 
 /*
+ * Create an `interrupt` node.
+ */
+struct node *
+node_interrupt_new(struct node *cond, struct node *body)
+{
+    struct node_interrupt *interrupt = bmalloc(sizeof(*interrupt));
+    interrupt->type = NODE_INTERRUPT;
+    interrupt->cond = cond;
+    interrupt->body = (struct node_list *)body;
+
+    return (struct node *)interrupt;
+}
+
+/*
  * Node value `true`.
  */
 struct node *
@@ -220,6 +234,13 @@ node_free(void *del)
             node_free(nif->then);
             node_free(nif->elseif_list);
             node_free(nif->alt);
+        }
+        break;
+    case NODE_INTERRUPT:
+        {
+            struct node_interrupt *interrupt = (struct node_interrupt *)n;
+            node_free(interrupt->cond);
+            node_free(interrupt->body);
         }
         break;
     case NODE_NIL:

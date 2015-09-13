@@ -45,4 +45,7 @@ emitter_gen_if(struct node_if *nif);
 void
 emitter_gen_value(struct node *nval);
 
+void
+emitter_gen_interrupt(struct node_interrupt *interrupt);
+
 #endif /* EMITTER_H */

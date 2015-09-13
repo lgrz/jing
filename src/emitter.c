@@ -71,6 +71,9 @@ emitter_gen_node(struct node *n)
     case NODE_VAL:
         emitter_gen_value(n);
         break;
+    case NODE_INTERRUPT:
+        emitter_gen_interrupt((struct node_interrupt *)n);
+        break;
     case NODE_NIL:
     default:
         fprintf(stderr, "emitter_gen_node: type error\n");
@@ -208,4 +211,21 @@ emitter_gen_value(struct node *nval)
             fprintf(stream, "true");
         }
     }
+}
+
+/*
+ * Generate an `interrupt` block.
+ */
+void
+emitter_gen_interrupt(struct node_interrupt *interrupt)
+{
+    assert(interrupt);
+    assert(interrupt->cond);
+    assert(interrupt->body);
+
+    fprintf(stream, "interrupt(");
+    emitter_gen_node(interrupt->cond);
+    fprintf(stream, ", ");
+    emitter_gen_list(interrupt->body, false);
+    fputc(')', stream);
 }

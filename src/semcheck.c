@@ -67,6 +67,9 @@ semcheck_chk_node(struct node *n)
     case NODE_IF:
         semcheck_chk_if((struct node_if *)n);
         break;
+    case NODE_INTERRUPT:
+        semcheck_chk_interrupt((struct node_interrupt *)n);
+        break;
     case NODE_NIL:
     default:
         semcheck_emit_err("semcheck_chk_node: type error");
@@ -171,4 +174,18 @@ semcheck_chk_if(struct node_if *nif)
     if (nif->alt) {
         semcheck_chk_list(nif->alt);
     }
+}
+
+/*
+ * Check an `interrupt`.
+ */
+void
+semcheck_chk_interrupt(struct node_interrupt *interrupt)
+{
+    assert(interrupt);
+    assert(interrupt->cond);
+    assert(interrupt->body);
+
+    /* FIXME: semcheck `interrupt->cond` */
+    semcheck_chk_list(interrupt->body);
 }

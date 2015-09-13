@@ -39,7 +39,8 @@ enum node_type {
     NODE_COMDCL,
     NODE_SEARCH,
     NODE_IF,
-    NODE_VAL
+    NODE_VAL,
+    NODE_INTERRUPT
 };
 
 struct node {
@@ -83,6 +84,12 @@ struct node_if {
     struct node_list *alt;
 };
 
+struct node_interrupt {
+    uint8_t type;
+    struct node *cond;
+    struct node_list *body;
+};
+
 struct node *
 node_proc_new(struct symbol *sym, struct node *n);
 
@@ -107,6 +114,9 @@ node_search_new(struct node *body);
 struct node *
 node_if_new(struct node *cond, struct node *then, struct node *elseif_list,
         struct node *alt);
+
+struct node *
+node_interrupt_new(struct node *cond, struct node *body);
 
 struct node *
 node_get_true(void);
