@@ -15,6 +15,14 @@ extern "C" {
 
 TEST_GROUP(symtab)
 {
+    void setup()
+    {
+    }
+
+    void teardown()
+    {
+        symtab_free();
+    }
 };
 
 TEST(symtab, new_symbol_has_undefined_type)
@@ -24,6 +32,13 @@ TEST(symtab, new_symbol_has_undefined_type)
     sym = symtab_lookup((char *)"dummy");
 
     CHECK(TNONE == sym->type);
+}
 
-    symtab_free();
+TEST(symtab, fix_symtab_name_overflow)
+{
+    struct symbol *sym;
+
+    sym = symtab_lookup((char *)"test_if_elseif_many");
+
+    STRCMP_EQUAL("test_if_elseif_many", sym->name);
 }

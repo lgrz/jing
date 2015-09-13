@@ -50,7 +50,7 @@ symtab_lookup(char *name)
     }
 
     sym = bmalloc(sizeof(*sym));
-    sym->name = bmalloc(sizeof(name) + 1);
+    sym->name = bmalloc(strlen(name) + 1);
     strcpy(sym->name, name);
     sym->def = NULL;
     sym->type = TNONE;
