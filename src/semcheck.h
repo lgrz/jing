@@ -38,4 +38,7 @@ semcheck_chk_symref(struct node_symref *ref);
 void
 semcheck_chk_search(struct node_search *search);
 
+void
+semcheck_chk_if(struct node_if *nif);
+
 #endif /* SEMCHECK_H */

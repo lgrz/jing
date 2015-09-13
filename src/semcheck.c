@@ -64,6 +64,9 @@ semcheck_chk_node(struct node *n)
     case NODE_COMDCL:
         /* unused */
         break;
+    case NODE_IF:
+        semcheck_chk_if((struct node_if *)n);
+        break;
     case NODE_NIL:
     default:
         semcheck_emit_err("semcheck_chk_node: type error");
@@ -135,5 +138,37 @@ semcheck_chk_search(struct node_search *search)
 
     if (search->body) {
         semcheck_chk_list(search->body);
+    }
+}
+
+/*
+ * Check an `if` statement.
+ */
+void
+semcheck_chk_if(struct node_if *nif)
+{
+    size_t i;
+
+    assert(nif);
+    assert(nif->cond);
+    assert(nif->elseif_list);
+
+    /* FIXME: semcheck `nif->cond` */
+    if (nif->then) {
+        semcheck_chk_list(nif->then);
+    }
+    if (nif->elseif_list) {
+        for (i = 0; i < nif->elseif_list->ary.size; ++i) {
+            struct node_if *nelse_if;
+
+            nelse_if = nif->elseif_list->ary.data[i];
+            /* FIXME: semcheck `nelse_if->cond` */
+            if (nelse_if->then) {
+                semcheck_chk_list(nelse_if->then);
+            }
+        }
+    }
+    if (nif->alt) {
+        semcheck_chk_list(nif->alt);
     }
 }

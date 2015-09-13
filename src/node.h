@@ -20,19 +20,31 @@
 /* Forward declare symtab */
 struct symbol;
 
+enum val_type {
+    VAL_BOOL
+};
+
+struct value {
+    uint8_t vtype;
+    union {
+        uint8_t bool_val;
+    } u;
+};
+
 enum node_type {
     NODE_NIL,
     NODE_PROC,
     NODE_SYMREF,
     NODE_LIST,
     NODE_COMDCL,
-    NODE_SEARCH
+    NODE_SEARCH,
+    NODE_IF,
+    NODE_VAL
 };
 
 struct node {
     uint8_t type;
-    struct node *left;
-    struct node *right;
+    struct value val;
 };
 
 struct node_proc {
@@ -63,6 +75,14 @@ struct node_search {
     struct node_list *body;
 };
 
+struct node_if {
+    uint8_t type;
+    struct node *cond;
+    struct node_list *then;
+    struct node_list *elseif_list;
+    struct node_list *alt;
+};
+
 struct node *
 node_proc_new(struct symbol *sym, struct node *n);
 
@@ -83,6 +103,16 @@ node_comdcl_new(enum type stype, struct symbol *sym, uint8_t arity);
 
 struct node *
 node_search_new(struct node *body);
+
+struct node *
+node_if_new(struct node *cond, struct node *then, struct node *elseif_list,
+        struct node *alt);
+
+struct node *
+node_get_true(void);
+
+struct node *
+node_get_false(void);
 
 int
 node_cmp(const void *xa, const void *xb);

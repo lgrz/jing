@@ -106,6 +106,53 @@ node_search_new(struct node *body)
 }
 
 /*
+ * Create an `if` node.
+ */
+struct node *
+node_if_new(struct node *cond, struct node *then, struct node *elseif_list,
+        struct node *alt)
+{
+    struct node_if *nif = bmalloc(sizeof(*nif));
+    nif->type = NODE_IF;
+    nif->cond = cond;
+    nif->then = (struct node_list *)then;
+    nif->elseif_list = (struct node_list *)elseif_list;
+    nif->alt = (struct node_list *)alt;
+
+    return (struct node *)nif;
+}
+
+/*
+ * Node value `true`.
+ */
+struct node *
+node_get_true(void)
+{
+    static struct node ntrue;
+
+    ntrue.type = NODE_VAL;
+    ntrue.val.vtype = VAL_BOOL;
+    ntrue.val.u.bool_val = 1;
+
+    return &ntrue;
+}
+
+/*
+ * Node value `false`.
+ */
+struct node *
+node_get_false(void)
+{
+    static struct node nfalse;
+
+    nfalse.type = NODE_VAL;
+    nfalse.val.vtype = VAL_BOOL;
+    nfalse.val.u.bool_val = 1;
+
+    return &nfalse;
+}
+
+/*
  * Compare node `xa` to `xb`.
  */
 int
@@ -150,12 +197,29 @@ node_free(void *del)
     case NODE_COMDCL:
         /* unused */
         break;
+    case NODE_VAL:
+        {
+            /* bool value is static */
+            if (VAL_BOOL == n->val.vtype) {
+                return;
+            }
+        }
+        break;
     case NODE_SEARCH:
         {
             struct node_search *search = (struct node_search *)n;
             if (search->body) {
                 node_free(search->body);
             }
+        }
+        break;
+    case NODE_IF:
+        {
+            struct node_if *nif = (struct node_if *)n;
+            node_free(nif->cond);
+            node_free(nif->then);
+            node_free(nif->elseif_list);
+            node_free(nif->alt);
         }
         break;
     case NODE_NIL:

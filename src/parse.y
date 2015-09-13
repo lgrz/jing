@@ -54,9 +54,11 @@ yylex(void);
 %type <node> opt_var_list
 %type <node> xproc_dcl proc_dcl
 %type <node> action_dcl
-%type <node> if_stmt while_stmt iter_stmt citer_stmt
+%type <node> if_stmt elseif_list elseif else
+%type <node> while_stmt iter_stmt citer_stmt
 %type <node> pick_stmt search_stmt interrupt_stmt
 %type <node> ndet_stmt conc_stmt pconc_stmt
+%type <node> expr
 %type <node> psuedo_expr formula_expr
 %type <node> stmt common_dcl simple_stmt complex_stmt compound_stmt empty_stmt
 
@@ -112,19 +114,34 @@ compound_stmt: '{' opt_stmt_list '}'
 
 if_stmt: LIF '(' expr ')' compound_stmt elseif_list else
         {
+            $$ = node_if_new($3, $5, $6, $7);
         }
 ;
 
 elseif: LELSE LIF '(' expr ')' compound_stmt
         {
+            $$ = node_if_new($4, $6, NULL, NULL);
         }
 ;
 
 elseif_list:
+            {
+                $$ = node_list_new();
+            }
            | elseif_list elseif
+            {
+                $$ = $1;
+                node_list_add($$, $2);
+            }
 
 else:
+    {
+        $$ = NULL;
+    }
     | LELSE compound_stmt
+    {
+        $$ = $2;
+    }
 ;
 
 while_stmt: LWHILE '(' expr ')' compound_stmt
@@ -191,12 +208,33 @@ formula_expr: '?' '(' expr ')'
 ;
 
 expr: '~' expr
+    {
+        yyerror("`~` not implemented");
+    }
     | expr LOROR expr
+    {
+        yyerror("`||` not implemented");
+    }
     | expr LANDAND expr
+    {
+        yyerror("`&&` not implemented");
+    }
     | '(' expr ')'
+    {
+        yyerror("`()` not implemented");
+    }
     | psuedo_expr
+    {
+        yyerror("`action/proc call` not implemented");
+    }
     | LTRUE
+    {
+        $$ = node_get_true();
+    }
     | LFALSE
+    {
+        $$ = node_get_false();
+    }
 ;
 
 psuedo_expr: LNAME

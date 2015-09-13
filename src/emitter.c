@@ -65,6 +65,12 @@ emitter_gen_node(struct node *n)
     case NODE_COMDCL:
         /* unused */
         break;
+    case NODE_IF:
+        emitter_gen_if((struct node_if *)n);
+        break;
+    case NODE_VAL:
+        emitter_gen_value(n);
+        break;
     case NODE_NIL:
     default:
         fprintf(stderr, "emitter_gen_node: type error\n");
@@ -97,13 +103,14 @@ emitter_gen_list(struct node_list *list, bool is_root)
 {
     size_t i, len = 0;
 
-    assert(list);
-
     if (!is_root) {
         fprintf(stream, "[");
     }
 
-    len = list->ary.size;
+    if (list) {
+        len = list->ary.size;
+    }
+
     for (i = 0; i < len; ++i) {
         struct node *n = (struct node *)list->ary.data[i];
 
@@ -145,4 +152,60 @@ emitter_gen_search(struct node_search *search)
         fprintf(stream, "[]");
     }
     fprintf(stream, ")");
+}
+
+/*
+ * Generate an `if` statement.
+ */
+void
+emitter_gen_if(struct node_if *nif)
+{
+    assert(nif);
+    assert(nif->cond);
+    assert(nif->elseif_list);
+
+    fprintf(stream, "if(");
+    emitter_gen_node(nif->cond);
+    fprintf(stream, ", ");
+    emitter_gen_list(nif->then, false);
+
+    fprintf(stream, ", ");
+    if (nif->elseif_list->ary.size > 0) {
+        size_t i;
+        for (i = 0; i < nif->elseif_list->ary.size; ++i) {
+            struct node_if *nelse_if;
+
+            nelse_if = nif->elseif_list->ary.data[i];
+            fprintf(stream, "if(");
+            emitter_gen_node(nelse_if->cond);
+            fprintf(stream, ", ");
+            emitter_gen_list(nelse_if->then, false);
+            fprintf(stream, ", ");
+        }
+
+        emitter_gen_list(nif->alt, false);
+        while (i--) {
+            fputc(')', stream);
+        }
+    } else {
+        emitter_gen_list(nif->alt, false);
+    }
+    fputc(')', stream);
+}
+
+/*
+ * Generate a value.
+ */
+void
+emitter_gen_value(struct node *nval)
+{
+    assert(nval);
+
+    if (VAL_BOOL == nval->val.vtype) {
+        if (0 == nval->val.u.bool_val) {
+            fprintf(stream, "false");
+        } else {
+            fprintf(stream, "true");
+        }
+    }
 }

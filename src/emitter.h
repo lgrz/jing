@@ -39,4 +39,10 @@ emitter_gen_symref(struct node_symref *ref);
 void
 emitter_gen_search(struct node_search *search);
 
+void
+emitter_gen_if(struct node_if *nif);
+
+void
+emitter_gen_value(struct node *nval);
+
 #endif /* EMITTER_H */
