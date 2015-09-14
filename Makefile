@@ -14,6 +14,8 @@ DEP := $(patsubst %.c,%.d,$(SRC)) src/parse.d
 TESTDIR = test
 TPASS_TESTS = $(wildcard test/trans-pass/*.jing)
 TFAIL_TESTS = $(wildcard test/trans-fail/*.jing)
+CHECK_QUICK = check-jing check-tpass check-tfail
+CHECK_FULL = $(CHECK_QUICK) check-tvalgrind
 
 .PHONY: all
 all: $(TARGET)
@@ -34,11 +36,14 @@ src/parse.o: src/y.tab.c src/lex.yy.c
 	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@ $(LDFLAGS)
 
 .PHONY: check
-check: check-jing check-trans-pass check-trans-fail
+check: $(CHECK_QUICK)
+
+.PHONY: check-full
+check-full: $(CHECK_FULL)
 
 .PHONY: check-jing
 check-jing: test-jing
-	./test/all
+	./test/all -c
 
 .PHONY: test-jing
 test-jing: $(TARGET) | local.mk
@@ -48,13 +53,17 @@ local.mk:
 	@echo "# For customisation of CPPUTEST_PATH" > local.mk
 	@echo "CPPUTEST_PATH=/path/to/cpputest" >> local.mk
 
-.PHONY: check-trans-pass
-check-trans-pass: $(TPASS_TESTS) $(TARGET)
+.PHONY: check-tpass
+check-tpass: $(TPASS_TESTS) $(TARGET)
 	./test/tpass ./$(TARGET) $(TPASS_TESTS)
 
-.PHONY: check-trans-fail
-check-trans-fail: $(TFAIL_TESTS) $(TARGET)
+.PHONY: check-tfail
+check-tfail: $(TFAIL_TESTS) $(TARGET)
 	./test/tfail ./$(TARGET) $(TFAIL_TESTS)
+
+.PHONY: check-tvalgrind
+check-tvalgrind: $(TPASS_TESTS) $(TARGET)
+	./test/tvalgrind ./$(TARGET) $(TPASS_TESTS)
 
 .PHONY: clean
 clean:

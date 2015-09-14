@@ -14,7 +14,7 @@ from collections import namedtuple
 Error = namedtuple('Error', 'error_str lineno')
 
 if len(sys.argv) < 3:
-    print "usage: fail_test <program> <file...>"
+    print "usage: tfail <program> <file...>"
     sys.exit(1)
 
 program = sys.argv[1]
@@ -61,8 +61,8 @@ for file in test_files:
             print stderr
 
 if failed:
-    print "\033[31m"
+    print "\033[31;1m"
 else:
-    print "\033[32m"
+    print "\033[32;1m"
 print "Tests: %d, Passed: %d, Failed: %d" % (len(test_files), passed, failed)
-print "\033[0m"
+print "\033[m"
