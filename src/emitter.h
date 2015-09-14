@@ -31,7 +31,7 @@ void
 emitter_gen_proc(struct node_proc *proc);
 
 void
-emitter_gen_list(struct node_list *list, bool is_root);
+emitter_gen_list(struct node_list *list, bool commas);
 
 void
 emitter_gen_symref(struct node_symref *ref);
@@ -47,5 +47,9 @@ emitter_gen_value(struct node *nval);
 
 void
 emitter_gen_cond_block(struct node_cond_block *cond_block);
+
+void
+emitter_gen_multistmt(struct node_comstmt *stmt, char *string,
+        size_t stmts_left);
 
 #endif /* EMITTER_H */

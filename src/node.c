@@ -256,6 +256,10 @@ node_free(void *del)
     case NODE_ITER:
     case NODE_CITER:
     case NODE_SEARCH:
+    case NODE_LABEL:
+    case NODE_NDET:
+    case NODE_CONC:
+    case NODE_PCONC:
         {
             struct node_comstmt *stmt = (struct node_comstmt *)n;
             if (stmt->body) {

@@ -61,7 +61,11 @@ semcheck_chk_node(struct node *n)
     case NODE_ITER:
     case NODE_CITER:
     case NODE_SEARCH:
-        /* TODO: semcheck_chk_comstmt((struct node_comstmt *)n); */
+        semcheck_chk_comstmt((struct node_comstmt *)n);
+        break;
+    case NODE_NDET:
+    case NODE_CONC:
+    case NODE_PCONC:
         break;
     case NODE_COMDCL:
         /* unused */
@@ -136,7 +140,7 @@ semcheck_chk_symref(struct node_symref *ref)
 }
 
 /*
- * Check a `search` block.
+ * Check a `search`, `iter`, or `citer` block.
  */
 void
 semcheck_chk_comstmt(struct node_comstmt *stmt)

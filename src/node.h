@@ -44,7 +44,11 @@ enum node_type {
     NODE_INTERRUPT,
     NODE_WHILE,
     NODE_ITER,
-    NODE_CITER
+    NODE_CITER,
+    NODE_NDET,
+    NODE_CONC,
+    NODE_PCONC,
+    NODE_LABEL
 };
 
 struct node {

@@ -58,6 +58,7 @@ yylex(void);
 %type <node> while_stmt iter_stmt citer_stmt
 %type <node> pick_stmt search_stmt interrupt_stmt
 %type <node> ndet_stmt conc_stmt pconc_stmt
+%type <node> label_list label_item
 %type <node> expr
 %type <node> psuedo_expr formula_expr
 %type <node> stmt common_dcl simple_stmt complex_stmt compound_stmt empty_stmt
@@ -151,7 +152,7 @@ while_stmt: LWHILE '(' expr ')' compound_stmt
 ;
 
 iter_stmt: LITER compound_stmt
-            { 
+            {
                 $$ = node_comstmt_new(NODE_ITER, $2);
             }
 ;
@@ -185,27 +186,44 @@ interrupt_stmt: LINTERRUPT '(' expr ')' compound_stmt
                 }
 ;
 
-ndet_stmt: LNDET '{' delta_pair delta_list '}'
+ndet_stmt: LNDET '{' label_list '}'
             {
+                $$ = node_comstmt_new(NODE_NDET, $3);
             }
 ;
 
-delta_pair: delta_item delta_item
-;
-
-delta_item: delta_label compound_stmt
-;
-
-delta_label: LNAME '.'
-;
-
-conc_stmt: LCONC '{' delta_pair delta_list '}'
+conc_stmt: LCONC '{' label_list '}'
             {
+                $$ = node_comstmt_new(NODE_CONC, $3);
             }
 ;
 
-pconc_stmt: LPCONC '{' delta_pair delta_list '}'
+pconc_stmt: LPCONC '{' label_list '}'
             {
+                $$ = node_comstmt_new(NODE_PCONC, $3);
+            }
+;
+
+label_list: label_item
+            {
+                $$ = NULL;
+                if (NULL != $1) {
+                    $$ = node_list_new();
+                    node_list_add($$, $1);
+                }
+            }
+           | label_list label_item
+            {
+                $$ = $1;
+                if (NULL != $2) {
+                    node_list_add($$, $2);
+                }
+            }
+;
+
+label_item: LNAME ':' compound_stmt
+            {
+                $$ = node_comstmt_new(NODE_LABEL, $3);
             }
 ;
 
@@ -365,10 +383,6 @@ arg: LNAME
     {
         $$ = node_symref_new($1, node_list_new());
     }
-;
-
-delta_list:
-         | delta_list delta_item
 ;
 
 /* optional */

@@ -31,11 +31,10 @@ void
 emitter_walk(struct node *root)
 {
     if (root && NODE_LIST == root->type) {
-        bool is_root = true;
         struct node_list *list = (struct node_list *)root;
 
         /* root level list does not require enclosing `[`, `]` */
-        emitter_gen_list(list, is_root);
+        emitter_gen_list(list, false);
     }
 }
 
@@ -54,7 +53,9 @@ emitter_gen_node(struct node *n)
         emitter_gen_proc((struct node_proc *)n);
         break;
     case NODE_LIST:
-        emitter_gen_list((struct node_list *)n, false);
+        fprintf(stream, "[");
+        emitter_gen_list((struct node_list *)n, true);
+        fprintf(stream, "]");
         break;
     case NODE_SYMREF:
         emitter_gen_symref((struct node_symref *)n);
@@ -75,15 +76,39 @@ emitter_gen_node(struct node *n)
     case NODE_ITER:
         fprintf(stream, "star(");
         emitter_gen_comstmt((struct node_comstmt *)n);
+        fprintf(stream, ")");
         break;
     case NODE_CITER:
         fprintf(stream, "iconc(");
         emitter_gen_comstmt((struct node_comstmt *)n);
+        fprintf(stream, ")");
         break;
     case NODE_SEARCH:
         fprintf(stream, "search(");
         emitter_gen_comstmt((struct node_comstmt *)n);
+        fprintf(stream, ")");
         break;
+    case NODE_LABEL:
+        emitter_gen_comstmt((struct node_comstmt *)n);
+        break;
+    case NODE_NDET:
+    {
+        struct node_comstmt *stmt = (struct node_comstmt *)n;
+        emitter_gen_multistmt(stmt, "ndet", stmt->body->ary.size);
+        break;
+    }
+    case NODE_CONC:
+    {
+        struct node_comstmt *stmt = (struct node_comstmt *)n;
+        emitter_gen_multistmt(stmt, "conc", stmt->body->ary.size);
+        break;
+    }
+    case NODE_PCONC:
+    {
+        struct node_comstmt *stmt = (struct node_comstmt *)n;
+        emitter_gen_multistmt(stmt, "pconc", stmt->body->ary.size);
+        break;
+    }
     case NODE_NIL:
     default:
         fprintf(stderr, "emitter_gen_node: type error\n");
@@ -112,34 +137,25 @@ emitter_gen_proc(struct node_proc *proc)
  * Generate a list of statements
  */
 void
-emitter_gen_list(struct node_list *list, bool is_root)
+emitter_gen_list(struct node_list *list, bool commas)
 {
     size_t i, len = 0;
 
-    if (!is_root) {
-        fprintf(stream, "[");
-    }
+    assert(list);
 
-    if (list) {
-        len = list->ary.size;
-    }
-
+    len = list->ary.size;
     for (i = 0; i < len; ++i) {
         struct node *n = (struct node *)list->ary.data[i];
 
         emitter_gen_node(n);
-        if (!is_root && i < len - 1) {
+        if (commas && i < len - 1) {
             fprintf(stream, ", ");
         }
-    }
-
-    if (!is_root) {
-        fprintf(stream, "]");
     }
 }
 
 /*
- * Generate a symbol refernce.
+ * Generate a symbol reference.
  */
 void
 emitter_gen_symref(struct node_symref *ref)
@@ -151,6 +167,29 @@ emitter_gen_symref(struct node_symref *ref)
     fprintf(stream, "%s", ref->sym->name);
 }
 
+/*
+ * Generate `ndet`, `conc`, or `pconc` statements
+ */
+void
+emitter_gen_multistmt(struct node_comstmt *stmt, char *string, size_t stmts_left)
+{
+    size_t size = stmt->body->ary.size;
+
+    fprintf(stream, "%s(", string);
+    emitter_gen_node((struct node *)stmt->body->ary.data[size - stmts_left]);
+    fprintf(stream, ", ");
+    if (stmts_left > 2) {
+        emitter_gen_multistmt(stmt, string, stmts_left - 1);
+    }
+    else {
+        emitter_gen_node((struct node *)stmt->body->ary.data[size-1]);
+    }
+    fprintf(stream, ")");
+}
+
+/*
+ * Generate `star`, `iconc`, or `search` statements
+ */
 void
 emitter_gen_comstmt(struct node_comstmt *stmt)
 {
@@ -161,7 +200,6 @@ emitter_gen_comstmt(struct node_comstmt *stmt)
     } else {
         fprintf(stream, "[]");
     }
-    fprintf(stream, ")");
 }
 
 /*
