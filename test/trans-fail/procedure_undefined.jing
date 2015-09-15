@@ -6,7 +6,5 @@
 // that was distributed with this source code.
 
 procedure myproc() {
-    interrupt (true) {
-        bar; // ERROR expected action or procedure call, found `0`
-    }
+    bar(); // ERROR expected action or procedure call, found `0`
 }

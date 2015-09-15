@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <assert.h>
 
 #include "array.h"
 #include "type.h"
@@ -59,6 +60,7 @@ struct node_proc {
 struct node_symref {
     uint8_t type;
     struct symbol *sym;
+    struct node_list *args;
 };
 
 struct node_list {
@@ -98,7 +100,7 @@ void
 node_proc_body(struct node *proc, struct node *body);
 
 struct node *
-node_symref_new(struct symbol *sym);
+node_symref_new(struct symbol *sym, struct node *args);
 
 struct node *
 node_list_new(void);

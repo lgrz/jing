@@ -8,6 +8,6 @@
 procedure myproc() {
     if (true) {
     } else if (true) {
-        bar; // ERROR expected action, found `0`
+        bar; // ERROR expected action or procedure call, found `0`
     }
 }

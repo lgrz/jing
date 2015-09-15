@@ -122,12 +122,13 @@ semcheck_chk_symref(struct node_symref *ref)
     assert(ref);
     assert(ref->sym);
 
-    if (TACTION != ref->sym->type) {
+    if (TNONE == ref->sym->type) {
         /*
          * FIXME: convert `sym->type` to human readable form
          * FIXME: lineno info is incorrect
          */
-        semcheck_emit_err("expected action, found `%d`\n", ref->sym->type);
+        semcheck_emit_err("expected action or procedure call, found `%d`\n",
+                ref->sym->type);
         error_exit();
     }
 }

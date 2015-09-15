@@ -12,7 +12,8 @@
 
 enum type {
     TNONE,
-    TACTION
+    TACTION,
+    TPROC
 };
 
 #endif /* TYPE_H */

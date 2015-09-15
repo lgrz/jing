@@ -138,6 +138,7 @@ emitter_gen_symref(struct node_symref *ref)
     assert(ref);
     assert(ref->sym);
 
+    /* handle `action` and `procedure` with 0 arguments. */
     fprintf(stream, "%s", ref->sym->name);
 }
 

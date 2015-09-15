@@ -50,7 +50,7 @@ yylex(void);
 
 %type <node> opt_xdcl_list xdcl_list_r xdcl
 %type <node> opt_stmt_list stmt_list_r
-%type <node> opt_arg_list
+%type <node> opt_arg_list arg_list_r arg
 %type <node> opt_var_list
 %type <node> xproc_dcl proc_dcl
 %type <node> action_dcl
@@ -244,10 +244,11 @@ expr: '~' expr
 
 psuedo_expr: LNAME
                 {
-                    $$ = node_symref_new($1);
+                    $$ = node_symref_new($1, node_list_new());
                 }
            | LNAME '(' opt_arg_list ')'
                 {
+                    $$ = node_symref_new($1, $3);
                 }
 ;
 
@@ -347,10 +348,21 @@ var: LVARIABLE
 ;
 
 arg_list_r: arg
-        | arg_list_r ',' arg
+              {
+                $$ = node_list_new();
+                node_list_add($$, $1);
+              }
+          | arg_list_r ',' arg
+              {
+                $$ = $1;
+                node_list_add($$, $3);
+              }
 ;
 
 arg: LNAME
+    {
+        $$ = node_symref_new($1, node_list_new());
+    }
 ;
 
 delta_list:
@@ -384,11 +396,11 @@ opt_var_list:
 
 opt_arg_list:
                 {
-                    $$ = NULL;
+                    $$ = node_list_new();
                 }
             | arg_list_r
                 {
-                    $$ = NULL;
+                    $$ = $1;
                 }
 ;
 

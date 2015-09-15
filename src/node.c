@@ -21,6 +21,9 @@ node_proc_new(struct symbol *sym, struct node *args)
     proc->sym = sym;
     proc->body = NULL;
 
+    symtab_set_type(sym, TPROC);
+    symtab_set_def(sym, (struct node *)proc);
+
     return (struct node *)proc;
 }
 
@@ -38,11 +41,16 @@ node_proc_body(struct node *n, struct node *body)
  * Create a reference to a symbol
  */
 struct node *
-node_symref_new(struct symbol *sym)
+node_symref_new(struct symbol *sym, struct node *args)
 {
-    struct node_symref *symref = bmalloc(sizeof(*symref));
+    struct node_symref *symref;
+
+    assert(args);
+
+    symref = bmalloc(sizeof(*symref));
     symref->type = NODE_SYMREF;
     symref->sym = sym;
+    symref->args = (struct node_list *)args;
 
     return (struct node *)symref;
 }
@@ -231,6 +239,11 @@ node_free(void *del)
         }
         break;
     case NODE_SYMREF:
+        {
+            struct node_symref *ref = (struct node_symref *)n;
+            node_free(ref->args);
+        }
+        break;
     case NODE_COMDCL:
         /* unused */
         break;
