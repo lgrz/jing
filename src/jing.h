@@ -14,6 +14,7 @@
 
 #include "node.h"
 #include "symtab.h"
+#include "emitter.h"
 
 extern struct node *
 ntop;

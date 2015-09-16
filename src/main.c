@@ -12,7 +12,6 @@
 #include <stdarg.h>
 
 #include "jing.h"
-#include "emitter.h"
 #include "semcheck.h"
 
 /* AST root node */
@@ -70,6 +69,8 @@ main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
+    emitter_init(stdout);
+
     yyparse();
     /* must be called before `yylex_destroy` */
     fclose(yyin);
@@ -80,8 +81,6 @@ main(int argc, char **argv)
     }
 
     semcheck_walk(ntop);
-    emitter_init(stdout);
-    emitter_walk(ntop);
     jing_destroy();
 
     return ret;

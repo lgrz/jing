@@ -12,7 +12,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <assert.h>
 
 #include "node.h"
@@ -22,16 +21,13 @@ void
 emitter_init(FILE *fp);
 
 void
-emitter_walk(struct node *top);
-
-void
 emitter_gen_node(struct node *n);
 
 void
 emitter_gen_proc(struct node_proc *proc);
 
 void
-emitter_gen_list(struct node_list *list, bool commas);
+emitter_gen_list(struct node_list *list);
 
 void
 emitter_gen_symref(struct node_symref *ref);

@@ -25,20 +25,6 @@ emitter_init(FILE *fp)
 }
 
 /*
- * Walk the AST and generate the relevant output code.
- */
-void
-emitter_walk(struct node *root)
-{
-    if (root && NODE_LIST == root->type) {
-        struct node_list *list = (struct node_list *)root;
-
-        /* root level list does not require enclosing `[`, `]` */
-        emitter_gen_list(list, false);
-    }
-}
-
-/*
  * Handle each type of node.
  */
 void
@@ -53,9 +39,7 @@ emitter_gen_node(struct node *n)
         emitter_gen_proc((struct node_proc *)n);
         break;
     case NODE_LIST:
-        fprintf(stream, "[");
-        emitter_gen_list((struct node_list *)n, true);
-        fprintf(stream, "]");
+        emitter_gen_list((struct node_list *)n);
         break;
     case NODE_SYMREF:
         emitter_gen_symref((struct node_symref *)n);
@@ -137,23 +121,24 @@ emitter_gen_proc(struct node_proc *proc)
  * Generate a list of statements
  */
 void
-emitter_gen_list(struct node_list *list, bool commas)
+emitter_gen_list(struct node_list *list)
 {
     size_t i, len = 0;
 
-    if (!list) {
-        return;
+    if (list) {
+        len = list->ary.size;
     }
 
-    len = list->ary.size;
+    fprintf(stream, "[");
     for (i = 0; i < len; ++i) {
         struct node *n = (struct node *)list->ary.data[i];
 
         emitter_gen_node(n);
-        if (commas && i < len - 1) {
+        if (i < len - 1) {
             fprintf(stream, ", ");
         }
     }
+    fprintf(stream, "]");
 }
 
 /*
@@ -216,9 +201,8 @@ emitter_gen_if(struct node_if *nif)
 
     fprintf(stream, "if(");
     emitter_gen_node(nif->cond);
-    fprintf(stream, ", [");
-    emitter_gen_list(nif->then, false);
-    fprintf(stream, "]");
+    fprintf(stream, ", ");
+    emitter_gen_list(nif->then);
 
     fprintf(stream, ", ");
     if (nif->elseif_list->ary.size > 0) {
@@ -229,20 +213,17 @@ emitter_gen_if(struct node_if *nif)
             nelse_if = nif->elseif_list->ary.data[i];
             fprintf(stream, "if(");
             emitter_gen_node(nelse_if->cond);
-            fprintf(stream, ", [");
-            emitter_gen_list(nelse_if->then, false);
-            fprintf(stream, "], ");
+            fprintf(stream, ", ");
+            emitter_gen_list(nelse_if->then);
+            fprintf(stream, ", ");
         }
-        fprintf(stream, "[");
-        emitter_gen_list(nif->alt, false);
-        fprintf(stream, "]");
+
+        emitter_gen_list(nif->alt);
         while (i--) {
             fputc(')', stream);
         }
     } else {
-        fprintf(stream, "[");
-        emitter_gen_list(nif->alt, false);
-        fprintf(stream, "]");
+        emitter_gen_list(nif->alt);
     }
     fputc(')', stream);
 }
@@ -280,7 +261,7 @@ emitter_gen_cond_block(struct node_cond_block *cond_block)
         fprintf(stream, "interrupt(");
     }
     emitter_gen_node(cond_block->cond);
-    fprintf(stream, ", [");
-    emitter_gen_list(cond_block->body, true);
-    fprintf(stream, "])");
+    fprintf(stream, ", ");
+    emitter_gen_list(cond_block->body);
+    fputc(')', stream);
 }

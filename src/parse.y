@@ -289,6 +289,7 @@ xdcl: common_dcl
     | xproc_dcl
         {
             $$ = $1;
+            emitter_gen_node($$);
         }
     | term
         {
