@@ -16,9 +16,13 @@
 
 #include "node.h"
 #include "symtab.h"
+#include "strbuf.h"
 
 void
-emitter_init(FILE *fp);
+emitter_init(struct strbuf *buf);
+
+void
+emitter_free(void);
 
 void
 emitter_gen_node(struct node *n);
@@ -45,7 +49,10 @@ void
 emitter_gen_cond_block(struct node_cond_block *cond_block);
 
 void
-emitter_gen_multistmt(struct node_comstmt *stmt, char *string,
+emitter_gen_multistmt(struct node_comstmt *stmt, const char *string,
         size_t stmts_left);
+
+const char *
+emitter_get_str(void);
 
 #endif /* EMITTER_H */

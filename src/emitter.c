@@ -9,18 +9,31 @@
 
 #include "emitter.h"
 
-/* stream to write output */
-static FILE *
-stream = NULL;
+/* strbuf to write output */
+static struct strbuf *
+buf = NULL;
 
 /*
  * Initialise emitter.
+ *
+ * `emitter` takes ownership of `bufp` and must `free` it when done.
  */
 void
-emitter_init(FILE *fp)
+emitter_init(struct strbuf *bufp)
 {
-    if (fp) {
-        stream = fp;
+    if (bufp) {
+        buf = bufp;
+    }
+}
+
+/*
+ * Free the string buffer.
+ */
+void
+emitter_free(void)
+{
+    if (buf) {
+        strbuf_free(buf);
     }
 }
 
@@ -58,19 +71,19 @@ emitter_gen_node(struct node *n)
         emitter_gen_cond_block((struct node_cond_block *)n);
         break;
     case NODE_ITER:
-        fprintf(stream, "star(");
+        strbuf_append(buf, "star(");
         emitter_gen_comstmt((struct node_comstmt *)n);
-        fprintf(stream, ")");
+        strbuf_append(buf, ")");
         break;
     case NODE_CITER:
-        fprintf(stream, "iconc(");
+        strbuf_append(buf, "iconc(");
         emitter_gen_comstmt((struct node_comstmt *)n);
-        fprintf(stream, ")");
+        strbuf_append(buf, ")");
         break;
     case NODE_SEARCH:
-        fprintf(stream, "search(");
+        strbuf_append(buf, "search(");
         emitter_gen_comstmt((struct node_comstmt *)n);
-        fprintf(stream, ")");
+        strbuf_append(buf, ")");
         break;
     case NODE_OR:
         emitter_gen_comstmt((struct node_comstmt *)n);
@@ -108,13 +121,13 @@ emitter_gen_proc(struct node_proc *proc)
 {
     assert(proc->sym);
 
-    fprintf(stream, "proc(%s, ", proc->sym->name);
+    strbuf_append(buf, "proc(%s, ", proc->sym->name);
     if (proc->body) {
         emitter_gen_node((struct node *)proc->body);
     } else {
-        fprintf(stream, "[]");
+        strbuf_append(buf, "[]");
     }
-    fprintf(stream, ").\n");
+    strbuf_append(buf, ").\n");
 }
 
 /*
@@ -129,16 +142,16 @@ emitter_gen_list(struct node_list *list)
         len = list->ary.size;
     }
 
-    fprintf(stream, "[");
+    strbuf_append(buf, "[");
     for (i = 0; i < len; ++i) {
         struct node *n = (struct node *)list->ary.data[i];
 
         emitter_gen_node(n);
         if (i < len - 1) {
-            fprintf(stream, ", ");
+            strbuf_append(buf, ", ");
         }
     }
-    fprintf(stream, "]");
+    strbuf_append(buf, "]");
 }
 
 /*
@@ -151,27 +164,28 @@ emitter_gen_symref(struct node_symref *ref)
     assert(ref->sym);
 
     /* handle `action` and `procedure` with 0 arguments. */
-    fprintf(stream, "%s", ref->sym->name);
+    strbuf_append(buf, "%s", ref->sym->name);
 }
 
 /*
  * Generate `ndet`, `conc`, or `pconc` statements
  */
 void
-emitter_gen_multistmt(struct node_comstmt *stmt, char *string, size_t stmts_left)
+emitter_gen_multistmt(struct node_comstmt *stmt, const char *string,
+        size_t stmts_left)
 {
     size_t size = stmt->body->ary.size;
 
-    fprintf(stream, "%s(", string);
+    strbuf_append(buf, "%s(", string);
     emitter_gen_node((struct node *)stmt->body->ary.data[size - stmts_left]);
-    fprintf(stream, ", ");
+    strbuf_append(buf, ", ");
     if (stmts_left > 2) {
         emitter_gen_multistmt(stmt, string, stmts_left - 1);
     }
     else {
         emitter_gen_node((struct node *)stmt->body->ary.data[size-1]);
     }
-    fprintf(stream, ")");
+    strbuf_append(buf, ")");
 }
 
 /*
@@ -185,7 +199,7 @@ emitter_gen_comstmt(struct node_comstmt *stmt)
     if (stmt->body) {
         emitter_gen_node((struct node *)stmt->body);
     } else {
-        fprintf(stream, "[]");
+        strbuf_append(buf, "[]");
     }
 }
 
@@ -199,33 +213,33 @@ emitter_gen_if(struct node_if *nif)
     assert(nif->cond);
     assert(nif->elseif_list);
 
-    fprintf(stream, "if(");
+    strbuf_append(buf, "if(");
     emitter_gen_node(nif->cond);
-    fprintf(stream, ", ");
+    strbuf_append(buf, ", ");
     emitter_gen_list(nif->then);
 
-    fprintf(stream, ", ");
+    strbuf_append(buf, ", ");
     if (nif->elseif_list->ary.size > 0) {
         size_t i;
         for (i = 0; i < nif->elseif_list->ary.size; ++i) {
             struct node_if *nelse_if;
 
             nelse_if = nif->elseif_list->ary.data[i];
-            fprintf(stream, "if(");
+            strbuf_append(buf, "if(");
             emitter_gen_node(nelse_if->cond);
-            fprintf(stream, ", ");
+            strbuf_append(buf, ", ");
             emitter_gen_list(nelse_if->then);
-            fprintf(stream, ", ");
+            strbuf_append(buf, ", ");
         }
 
         emitter_gen_list(nif->alt);
         while (i--) {
-            fputc(')', stream);
+            strbuf_append(buf, ")");
         }
     } else {
         emitter_gen_list(nif->alt);
     }
-    fputc(')', stream);
+    strbuf_append(buf, ")");
 }
 
 /*
@@ -238,9 +252,9 @@ emitter_gen_value(struct node *nval)
 
     if (VAL_BOOL == nval->val.vtype) {
         if (0 == nval->val.u.bool_val) {
-            fprintf(stream, "false");
+            strbuf_append(buf, "false");
         } else {
-            fprintf(stream, "true");
+            strbuf_append(buf, "true");
         }
     }
 }
@@ -256,12 +270,25 @@ emitter_gen_cond_block(struct node_cond_block *cond_block)
     assert(cond_block->body);
 
     if (NODE_WHILE == cond_block->type) {
-        fprintf(stream, "while(");
+        strbuf_append(buf, "while(");
     } else {
-        fprintf(stream, "interrupt(");
+        strbuf_append(buf, "interrupt(");
     }
     emitter_gen_node(cond_block->cond);
-    fprintf(stream, ", ");
+    strbuf_append(buf, ", ");
     emitter_gen_list(cond_block->body);
-    fputc(')', stream);
+    strbuf_append(buf, ")");
+}
+
+/*
+ * Get a reference to the generated code.
+ */
+const char *
+emitter_get_str(void)
+{
+    if (buf && buf->data) {
+        return buf->data;
+    }
+
+    return "";
 }

@@ -13,6 +13,7 @@
 
 #include "jing.h"
 #include "semcheck.h"
+#include "strbuf.h"
 
 /* AST root node */
 struct node *
@@ -41,6 +42,7 @@ jing_destroy(void)
 {
     node_free(ntop);
     symtab_free();
+    emitter_free();
 }
 
 /*
@@ -69,7 +71,7 @@ main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
-    emitter_init(stdout);
+    emitter_init(strbuf_new());
 
     yyparse();
     /* must be called before `yylex_destroy` */
@@ -81,6 +83,7 @@ main(int argc, char **argv)
     }
 
     semcheck_walk(ntop);
+    fprintf(stdout, "%s", emitter_get_str());
     jing_destroy();
 
     return ret;
