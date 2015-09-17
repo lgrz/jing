@@ -8,13 +8,13 @@ LDFLAGS += -L$(CPPUTEST_PATH)/lib -lCppUTest
 DEBUG_CXXFLAGS = -g -O0 -DDEBUG
 
 TARGET = all
-SRC = jing/main.cpp jing/symtab_test.cpp
+SRC = jing/main.cpp jing/symtab_test.cpp jing/strbuf_test.cpp
 TEST_OBJ := $(SRC:.cpp=.o)
 DEP := $(SRC:.cpp=.d)
 
 # object files from ../src
 OBJDIR = ../src
-OBJ = $(OBJDIR)/symtab.o $(OBJDIR)/util.o
+OBJ = $(OBJDIR)/symtab.o $(OBJDIR)/util.o $(OBJDIR)/strbuf.o
 
 .PHONY: test-jing
 test-jing: $(TARGET)
