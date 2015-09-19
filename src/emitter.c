@@ -88,7 +88,7 @@ emitter_gen_node(struct node *n)
         emitter_gen_comstmt((struct node_comstmt *)n);
         fprintf(stream, ")");
         break;
-    case NODE_LABEL:
+    case NODE_OR:
         emitter_gen_comstmt((struct node_comstmt *)n);
         break;
     case NODE_NDET:

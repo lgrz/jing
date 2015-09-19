@@ -80,6 +80,20 @@ node_list_add(struct node *n, struct node *el)
 }
 
 /*
+ * Append a list to another.
+ */
+void
+node_list_append(struct node *start, struct node *end)
+{
+    struct node_list *end_list = (struct node_list *)end;
+    size_t i, size = ((struct node_list *)end)->ary.size;
+
+    for (i = 0; i < size; i++) {
+        node_list_add(start, end_list->ary.data[i]);
+    }
+}
+
+/*
  * Create a common declaration, one of `action`, `fluent`, `prolog`.
  */
 struct node *
@@ -256,7 +270,7 @@ node_free(void *del)
     case NODE_ITER:
     case NODE_CITER:
     case NODE_SEARCH:
-    case NODE_LABEL:
+    case NODE_OR:
     case NODE_NDET:
     case NODE_CONC:
     case NODE_PCONC:

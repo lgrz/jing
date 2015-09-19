@@ -27,6 +27,7 @@ yylex(void);
        LPROLOG
        LIF
        LELSE
+       LOR
        LWHILE
        LPROCEDURE
        LITER
@@ -58,7 +59,7 @@ yylex(void);
 %type <node> while_stmt iter_stmt citer_stmt
 %type <node> pick_stmt search_stmt interrupt_stmt
 %type <node> ndet_stmt conc_stmt pconc_stmt
-%type <node> label_list label_item
+%type <node> or_list or_item
 %type <node> expr
 %type <node> psuedo_expr formula_expr
 %type <node> stmt common_dcl simple_stmt complex_stmt compound_stmt empty_stmt
@@ -186,25 +187,37 @@ interrupt_stmt: LINTERRUPT '(' expr ')' compound_stmt
                 }
 ;
 
-ndet_stmt: LNDET '{' label_list '}'
+ndet_stmt: LNDET '{' compound_stmt or_list '}'
             {
-                $$ = node_comstmt_new(NODE_NDET, $3);
+                struct node *list = node_list_new();
+                $$ = node_comstmt_new(NODE_OR, $3);
+                node_list_add(list, $$);
+                node_list_append(list, $4);
+                $$ = node_comstmt_new(NODE_NDET, list);
             }
 ;
 
-conc_stmt: LCONC '{' label_list '}'
+conc_stmt: LCONC '{' compound_stmt or_list '}'
             {
-                $$ = node_comstmt_new(NODE_CONC, $3);
+                struct node *list = node_list_new();
+                $$ = node_comstmt_new(NODE_OR, $3);
+                node_list_add(list, $$);
+                node_list_append(list, $4);
+                $$ = node_comstmt_new(NODE_CONC, list);
             }
 ;
 
-pconc_stmt: LPCONC '{' label_list '}'
+pconc_stmt: LPCONC '{' compound_stmt or_list '}'
             {
-                $$ = node_comstmt_new(NODE_PCONC, $3);
+                struct node *list = node_list_new();
+                $$ = node_comstmt_new(NODE_OR, $3);
+                node_list_add(list, $$);
+                node_list_append(list, $4);
+                $$ = node_comstmt_new(NODE_PCONC, list);
             }
 ;
 
-label_list: label_item
+or_list: or_item
             {
                 $$ = NULL;
                 if (NULL != $1) {
@@ -212,7 +225,7 @@ label_list: label_item
                     node_list_add($$, $1);
                 }
             }
-           | label_list label_item
+           | or_list or_item
             {
                 $$ = $1;
                 if (NULL != $2) {
@@ -221,9 +234,9 @@ label_list: label_item
             }
 ;
 
-label_item: LNAME ':' compound_stmt
+or_item: LOR compound_stmt
             {
-                $$ = node_comstmt_new(NODE_LABEL, $3);
+                $$ = node_comstmt_new(NODE_OR, $2);
             }
 ;
 

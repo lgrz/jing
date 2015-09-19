@@ -36,6 +36,7 @@
 
 "if"        { return LIF; }
 "else"      { return LELSE; }
+"or"        { return LOR; }
 "pick"      { return LPICK; }
 "iter"      { return LITER; }
 "ndet"      { return LNDET; }

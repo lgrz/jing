@@ -48,7 +48,7 @@ enum node_type {
     NODE_NDET,
     NODE_CONC,
     NODE_PCONC,
-    NODE_LABEL
+    NODE_OR
 };
 
 struct node {
@@ -113,6 +113,9 @@ node_list_new(void);
 
 void
 node_list_add(struct node *list, struct node *el);
+
+void
+node_list_append(struct node *start, struct node *end);
 
 struct node *
 node_comdcl_new(enum type stype, struct symbol *sym, uint8_t arity);
