@@ -214,8 +214,9 @@ emitter_gen_if(struct node_if *nif)
 
     fprintf(stream, "if(");
     emitter_gen_node(nif->cond);
-    fprintf(stream, ", ");
+    fprintf(stream, ", [");
     emitter_gen_list(nif->then, false);
+    fprintf(stream, "]");
 
     fprintf(stream, ", ");
     if (nif->elseif_list->ary.size > 0) {
@@ -226,17 +227,20 @@ emitter_gen_if(struct node_if *nif)
             nelse_if = nif->elseif_list->ary.data[i];
             fprintf(stream, "if(");
             emitter_gen_node(nelse_if->cond);
-            fprintf(stream, ", ");
+            fprintf(stream, ", [");
             emitter_gen_list(nelse_if->then, false);
-            fprintf(stream, ", ");
+            fprintf(stream, "], ");
         }
-
+        fprintf(stream, "[");
         emitter_gen_list(nif->alt, false);
+        fprintf(stream, "]");
         while (i--) {
             fputc(')', stream);
         }
     } else {
+        fprintf(stream, "[");
         emitter_gen_list(nif->alt, false);
+        fprintf(stream, "]");
     }
     fputc(')', stream);
 }
