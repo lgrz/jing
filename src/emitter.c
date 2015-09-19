@@ -141,7 +141,9 @@ emitter_gen_list(struct node_list *list, bool commas)
 {
     size_t i, len = 0;
 
-    assert(list);
+    if (!list) {
+        return;
+    }
 
     len = list->ary.size;
     for (i = 0; i < len; ++i) {
