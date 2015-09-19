@@ -9,7 +9,7 @@ LDFLAGS +=
 
 SRC = src/main.c src/node.c src/symtab.c src/util.c src/array.c \
 	  src/emitter.c src/semcheck.c src/strbuf.c
-OBJ := $(SRC:.c=.o) src/parse.o
+OBJ := src/parse.o $(SRC:.c=.o)
 DEP := $(patsubst %.c,%.d,$(SRC)) src/parse.d
 
 TESTDIR = test

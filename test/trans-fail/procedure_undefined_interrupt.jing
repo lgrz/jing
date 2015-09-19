@@ -6,5 +6,9 @@
 // that was distributed with this source code.
 
 procedure myproc() {
-    interrupt (true) bar; // ERROR expected action or procedure call, found `0`
+    interrupt (true) {
+        bar(); // ERROR undefined procedure `bar`
+    }
+
+    interrupt (true) bar(); // ERROR undefined procedure `bar`
 }

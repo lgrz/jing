@@ -8,5 +8,5 @@
 action foo: 0;
 
 procedure myproc() {
-    bar; // ERROR expected action or procedure call, found `0`
+    bar; // ERROR undefined action `bar`
 }

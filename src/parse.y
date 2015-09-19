@@ -277,10 +277,16 @@ expr: '~' expr
 
 psuedo_expr: LNAME
                 {
+                    if (!semcheck_action_defined($1)) {
+                        yyerrorl(@1, "undefined action `%s`", $1->name);
+                    }
                     $$ = node_symref_new($1, node_list_new());
                 }
            | LNAME '(' opt_arg_list ')'
                 {
+                    if (!semcheck_proc_defined($1)) {
+                        yyerrorl(@1, "undefined procedure `%s`", $1->name);
+                    }
                     $$ = node_symref_new($1, $3);
                 }
 ;

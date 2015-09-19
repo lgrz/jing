@@ -7,6 +7,6 @@
 
 procedure myproc() {
     while (true) {
-        bar; // ERROR expected action or procedure call, found `0`
+        bar; // ERROR undefined action `bar`
     }
 }

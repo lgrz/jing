@@ -10,9 +10,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <string.h>
 
 #include "jing.h"
-#include "semcheck.h"
 #include "strbuf.h"
 
 /* AST root node */
@@ -22,13 +22,38 @@ ntop = NULL;
 static char *
 infile = NULL;
 
+/*
+ * Display error with line number.
+ */
 void
 yyerror(const char *s, ...)
 {
     va_list ap;
 
+    ++yynerrs;
+
     va_start(ap, s);
-    fprintf(stderr, "%d: error: ", yylineno);
+    fprintf(stderr, "%s:%d: error: ", infile, yylineno);
+    vfprintf(stderr, s, ap);
+    fprintf(stderr, "\n");
+    va_end(ap);
+}
+
+/*
+ * Display error with location information.
+ */
+void
+yyerrorl(YYLTYPE t, const char *s, ...)
+{
+    va_list ap;
+
+    ++yynerrs;
+
+    va_start(ap, s);
+    if (t.first_line) {
+        fprintf(stderr, "%s:%d:%d %d:%d error: ", infile, t.first_line,
+                t.first_column, t.last_line, t.last_column);
+    }
     vfprintf(stderr, s, ap);
     fprintf(stderr, "\n");
     va_end(ap);
@@ -58,7 +83,7 @@ error_exit(void)
 int
 main(int argc, char **argv)
 {
-    int ret = EXIT_SUCCESS;
+    char *ptr;
 
     if (2 != argc) {
         fprintf(stderr, "usage: jing2indigo file.jing\n");
@@ -71,6 +96,11 @@ main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
+    ptr = strrchr(infile, '/');
+    if (ptr) {
+        infile = ++ptr;
+    }
+
     emitter_init(strbuf_new());
 
     yyparse();
@@ -79,12 +109,11 @@ main(int argc, char **argv)
     yylex_destroy();
 
     if (yynerrs) {
-        ret = EXIT_FAILURE;
+        error_exit();
     }
 
-    semcheck_walk(ntop);
     fprintf(stdout, "%s", emitter_get_str());
     jing_destroy();
 
-    return ret;
+    return 0;
 }

@@ -6,8 +6,7 @@
 // that was distributed with this source code.
 
 procedure myproc() {
-    if (true) {
-    } else if (true) {
-        bar; // ERROR expected action or procedure call, found `0`
+    while (true) {
+        bar(); // ERROR undefined procedure `bar`
     }
 }

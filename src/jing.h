@@ -15,6 +15,8 @@
 #include "node.h"
 #include "symtab.h"
 #include "emitter.h"
+#include "semcheck.h"
+#include "y.tab.h"
 
 extern struct node *
 ntop;
@@ -34,8 +36,11 @@ yyparse(void);
 extern int
 yylex_destroy(void);
 
-void
+extern void
 yyerror(const char *s, ...);
+
+extern void
+yyerrorl(YYLTYPE t, const char *s, ...);
 
 extern int
 error_exit(void);

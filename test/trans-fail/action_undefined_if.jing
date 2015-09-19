@@ -7,6 +7,10 @@
 
 procedure myproc() {
     if (true) {
-        bar; // ERROR expected action or procedure call, found `0`
+        bar; // ERROR undefined action `bar`
+    } else if (true) {
+        bar; // ERROR undefined action `bar`
+    } else {
+        bar; // ERROR undefined action `bar`
     }
 }
