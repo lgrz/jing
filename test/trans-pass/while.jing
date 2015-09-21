@@ -6,12 +6,14 @@
 // that was distributed with this source code.
 
 // EXPECTED OUTPUT
-// proc(while_block, [while(true, [up])]).
+// proc(while_block, [while(true, [up, down])]).
 
 action up: 0;
+action down: 0;
 
 procedure while_block() {
     while (true) {
         up;
+        down;
     }
 }

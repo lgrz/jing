@@ -1,3 +1,13 @@
+// This file is a part of Jing.
+//
+// Copyright (c) 2015 The Jing Authors.
+//
+// For the full copyright and license information, please view the LICENSE file
+// that was distributed with this source code.
+
+// EXPECTED OUTPUT
+// proc(drink_water, [star([pour_glass, drink, destroy_glass]), iconc([check_this, check_that, goodbye]), search([find_nemo, find_wally, found])]).
+
 action pour_glass: 0;
 action drink: 0;
 action destroy_glass: 0;
