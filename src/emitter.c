@@ -280,7 +280,7 @@ emitter_gen_cond_block(struct node_cond_block *cond_block)
         fprintf(stream, "interrupt(");
     }
     emitter_gen_node(cond_block->cond);
-    fprintf(stream, ", ");
-    emitter_gen_list(cond_block->body, false);
-    fputc(')', stream);
+    fprintf(stream, ", [");
+    emitter_gen_list(cond_block->body, true);
+    fprintf(stream, "])");
 }

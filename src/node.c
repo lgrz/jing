@@ -91,6 +91,8 @@ node_list_append(struct node *start, struct node *end)
     for (i = 0; i < size; i++) {
         node_list_add(start, end_list->ary.data[i]);
     }
+    free(end_list->ary.data);
+    free(end_list);
 }
 
 /*
