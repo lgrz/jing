@@ -67,7 +67,7 @@ check-tvalgrind: $(TPASS_TESTS) $(TARGET)
 	./test/tvalgrind ./$(TARGET) $(TPASS_TESTS)
 
 .PHONY: clean
-clean:
+clean: | local.mk
 	$(MAKE) -C $(TESTDIR) $@
 	$(RM) $(TARGET) $(OBJ) $(DEP) \
 		src/lex.yy.c src/y.tab.{c,h}
