@@ -3,9 +3,9 @@ TARGET = jing2indigo
 LEX = flex
 YACC = bison -d
 CC = gcc
-CFLAGS += -std=c99 -Wall -Wextra -pedantic -O0 -DYYDEBUG=1 \
-		  -D_XOPEN_SOURCE=700 -g -Isrc
+CFLAGS += -std=c99 -Wall -Wextra -pedantic -O2 -D_XOPEN_SOURCE=700 -Isrc
 LDFLAGS +=
+DEBUG_CFLAGS = -g -O0 -DYYDEBUG=1 -DDEBUG
 
 SRC = src/main.c src/node.c src/symtab.c src/util.c src/array.c \
 	  src/emitter.c src/semcheck.c src/strbuf.c
@@ -20,6 +20,10 @@ CHECK_FULL = $(CHECK_QUICK) check-tvalgrind
 
 .PHONY: all
 all: $(TARGET)
+
+debug: CFLAGS := $(CFLAGS:-O%=)
+debug: CC := $(CC) $(DEBUG_CFLAGS)
+debug: all
 
 $(TARGET): $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $^ src/lex.yy.c $(LDFLAGS)
