@@ -54,7 +54,7 @@ yylex(void);
 %type <node> opt_arg_list arg_list_r arg
 %type <node> opt_var_list
 %type <node> xproc_dcl proc_dcl
-%type <node> action_dcl
+%type <node> action_dcl rel_fluent_dcl fun_fluent_dcl prolog_dcl
 %type <node> if_stmt elseif_list elseif else
 %type <node> while_stmt iter_stmt citer_stmt
 %type <node> pick_stmt search_stmt interrupt_stmt
@@ -325,12 +325,21 @@ action_dcl: LACTION LNAME ':' LNUMBER
 ;
 
 rel_fluent_dcl: LREL LFLUENT LNAME ':' LNUMBER
+            {
+                $$ = node_comdcl_new(TFLUENTREL, $3, $5);
+            }
 ;
 
 fun_fluent_dcl: LFUN LFLUENT LNAME ':' LNUMBER
+            {
+                $$ = node_comdcl_new(TFLUENTFUN, $3, $5);
+            }
 ;
 
 prolog_dcl: LPROLOG LNAME ':' LNUMBER
+            {
+                $$ = node_comdcl_new(TPROLOG, $2, $4);
+            }
 ;
 
 xproc_dcl: proc_dcl compound_stmt

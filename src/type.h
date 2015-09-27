@@ -13,7 +13,10 @@
 enum type {
     TNONE,
     TACTION,
-    TPROC
+    TPROC,
+    TFLUENTREL,
+    TFLUENTFUN,
+    TPROLOG
 };
 
 #endif /* TYPE_H */
