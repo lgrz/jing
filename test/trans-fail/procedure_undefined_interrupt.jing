@@ -7,8 +7,8 @@
 
 procedure myproc() {
     interrupt (true) {
-        bar(); // ERROR undefined procedure `bar`
+        bar(); // ERROR unresolved name `bar`
     }
 
-    interrupt (true) bar(); // ERROR undefined procedure `bar`
+    interrupt (true) bar(); // ERROR unresolved name `bar`
 }

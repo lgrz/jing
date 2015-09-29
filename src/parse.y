@@ -52,7 +52,7 @@ yylex(void);
 %type <node> opt_xdcl_list xdcl_list_r xdcl
 %type <node> opt_stmt_list stmt_list_r
 %type <node> opt_arg_list arg_list_r arg
-%type <node> opt_var_list
+%type <node> opt_var_list var_list_r var
 %type <node> xproc_dcl proc_dcl
 %type <node> action_dcl rel_fluent_dcl fun_fluent_dcl prolog_dcl
 %type <node> if_stmt elseif_list elseif else
@@ -277,17 +277,31 @@ expr: '~' expr
 
 psuedo_expr: LNAME
                 {
-                    if (!semcheck_action_defined($1)) {
-                        yyerrorl(@1, "undefined action `%s`", $1->name);
-                    }
                     $$ = node_symref_new($1, node_list_new());
+
+                    enum error_code err_code = ENONE;
+                    err_code = semcheck_action_defined($1);
+                    if (semcheck_is_error(err_code)) {
+                        semcheck_errorl(@1, err_code, $$);
+                    }
                 }
            | LNAME '(' opt_arg_list ')'
                 {
-                    if (!semcheck_proc_defined($1)) {
-                        yyerrorl(@1, "undefined procedure `%s`", $1->name);
-                    }
                     $$ = node_symref_new($1, $3);
+
+                    enum error_code err_code = ENONE;
+
+                    /* check symbol is defined */
+                    err_code = semcheck_usercall_defined($1);
+                    if (semcheck_is_error(err_code)) {
+                        semcheck_errorl(@1, err_code, $$);
+                    }
+
+                    /* check argument count */
+                    err_code = semcheck_sym_args($$);
+                    if (semcheck_is_error(err_code)) {
+                        semcheck_errorl(@3, err_code, $$);
+                    }
                 }
 ;
 
@@ -390,10 +404,22 @@ stmt_list_r: stmt
 ;
 
 var_list_r: var
-      | var_list_r ',' var
+              {
+                $$ = node_list_new();
+                node_list_add($$, $1);
+              }
+          | var_list_r ',' var
+              {
+                $$ = $1;
+                node_list_add($$, $3);
+              }
 ;
 
 var: LVARIABLE
+    {
+        /* Dummy list for args, not used. */
+        $$ = node_symref_new($1, node_list_new());
+    }
 ;
 
 arg_list_r: arg
@@ -431,11 +457,11 @@ opt_stmt_list:
 
 opt_var_list:
         {
-            $$ = NULL;
+            $$ = node_list_new();
         }
         | var_list_r
         {
-            $$ = NULL;
+            $$ = $1;
         }
 ;
 

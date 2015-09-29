@@ -14,12 +14,38 @@
 #include <stdbool.h>
 #include <assert.h>
 
+#include "node.h"
 #include "symtab.h"
 
-bool
-semcheck_action_defined(struct symbol *sym);
+/*
+ * Forward declaration
+ * FIXME: move error codes to an external module.
+ */
+#include "y.tab.h"
+extern void
+yyerrorl(YYLTYPE t, const char *s, ...);
+
+
+enum error_code {
+    ENONE = 0, /* no error */
+    E0001, /* unresolved name */
+    E0002, /* unresolved action */
+    E0003 /* argument count mismatch */
+};
 
 bool
-semcheck_proc_defined(struct symbol *sym);
+semcheck_is_error(enum error_code err);
+
+void
+semcheck_errorl(YYLTYPE t, enum error_code err, struct node *n);
+
+enum error_code
+semcheck_sym_args(struct node *n);
+
+enum error_code
+semcheck_usercall_defined(struct symbol *sym);
+
+enum error_code
+semcheck_action_defined(struct symbol *sym);
 
 #endif /* SEMCHECK_H */

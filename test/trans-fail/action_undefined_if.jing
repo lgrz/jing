@@ -7,10 +7,10 @@
 
 procedure myproc() {
     if (true) {
-        bar; // ERROR undefined action `bar`
+        bar; // ERROR unresolved action `bar`
     } else if (true) {
-        bar; // ERROR undefined action `bar`
+        bar; // ERROR unresolved action `bar`
     } else {
-        bar; // ERROR undefined action `bar`
+        bar; // ERROR unresolved action `bar`
     }
 }

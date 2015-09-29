@@ -17,7 +17,7 @@ node_proc_new(struct symbol *sym, struct node *args)
 {
     struct node_proc *proc = bmalloc(sizeof(*proc));
     proc->type = NODE_PROC;
-    proc->args = args;
+    proc->args = (struct node_list *)args;
     proc->sym = sym;
     proc->body = NULL;
 
@@ -241,6 +241,9 @@ node_free(void *del)
     case NODE_PROC:
         {
             struct node_proc *proc = (struct node_proc *)n;
+            if (proc->args) {
+                node_free(proc->args);
+            }
             if (proc->body) {
                 node_free(proc->body);
             }

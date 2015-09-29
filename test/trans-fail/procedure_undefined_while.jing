@@ -7,6 +7,6 @@
 
 procedure myproc() {
     while (true) {
-        bar(); // ERROR undefined procedure `bar`
+        bar(); // ERROR unresolved name `bar`
     }
 }

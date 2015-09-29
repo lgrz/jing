@@ -7,10 +7,10 @@
 
 procedure myproc() {
     if (true) {
-        bar(); // ERROR undefined procedure `bar`
+        bar(); // ERROR unresolved name `bar`
     } else if (true) {
-        bar(); // ERROR undefined procedure `bar`
+        bar(); // ERROR unresolved name `bar`
     } else {
-        bar(); // ERROR undefined procedure `bar`
+        bar(); // ERROR unresolved name `bar`
     }
 }

@@ -7,8 +7,8 @@
 
 procedure myproc() {
     interrupt (true) {
-        bar; // ERROR undefined action `bar`
+        bar; // ERROR unresolved action `bar`
     }
 
-    interrupt (true) bar; // ERROR undefined action `bar`
+    interrupt (true) bar; // ERROR unresolved action `bar`
 }

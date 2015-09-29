@@ -6,5 +6,5 @@
 // that was distributed with this source code.
 
 procedure myproc() {
-    bar(); // ERROR undefined procedure `bar`
+    bar(); // ERROR unresolved name `bar`
 }

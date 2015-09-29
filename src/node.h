@@ -58,7 +58,7 @@ struct node {
 
 struct node_proc {
     uint8_t type;
-    struct node *args;
+    struct node_list *args;
     struct node_list *body;
     struct symbol *sym;
 };

@@ -8,5 +8,5 @@
 action foo: 0;
 
 procedure myproc() {
-    bar; // ERROR undefined action `bar`
+    bar; // ERROR unresolved action `bar`
 }
