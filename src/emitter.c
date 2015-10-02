@@ -46,13 +46,12 @@ emitter_gen_node(struct node *n)
     if (!n) {
         return;
     }
-
     switch (n->type) {
     case NODE_PROC:
         emitter_gen_proc((struct node_proc *)n);
         break;
     case NODE_LIST:
-        emitter_gen_list((struct node_list *)n);
+        emitter_gen_list_brackets((struct node_list *)n);
         break;
     case NODE_SYMREF:
         emitter_gen_symref((struct node_symref *)n);
@@ -69,6 +68,9 @@ emitter_gen_node(struct node *n)
     case NODE_INTERRUPT:
     case NODE_WHILE:
         emitter_gen_cond_block((struct node_cond_block *)n);
+        break;
+    case NODE_EXPR:
+        emitter_gen_op((struct node_expr *)n);
         break;
     case NODE_ITER:
         strbuf_append(buf, "star(");
@@ -106,6 +108,9 @@ emitter_gen_node(struct node *n)
         emitter_gen_multistmt(stmt, "pconc", stmt->body->ary.size);
         break;
     }
+    case NODE_NUM:
+        strbuf_append(buf, "%d", ((struct node_num *)n)->num);
+        break;
     case NODE_NIL:
     default:
         fprintf(stderr, "emitter_gen_node: type error\n");
@@ -142,7 +147,6 @@ emitter_gen_list(struct node_list *list)
         len = list->ary.size;
     }
 
-    strbuf_append(buf, "[");
     for (i = 0; i < len; ++i) {
         struct node *n = (struct node *)list->ary.data[i];
 
@@ -151,7 +155,28 @@ emitter_gen_list(struct node_list *list)
             strbuf_append(buf, ", ");
         }
     }
+}
+
+/*
+ * Generate a list of statements with surrounding square brackets
+ */
+void
+emitter_gen_list_brackets(struct node_list *list)
+{
+    strbuf_append(buf, "[");
+    emitter_gen_list(list);
     strbuf_append(buf, "]");
+}
+
+/*
+ * Generate a list of statements with surrounding parentheses
+ */
+void
+emitter_gen_list_parens(struct node_list *list)
+{
+    strbuf_append(buf, "(");
+    emitter_gen_list(list);
+    strbuf_append(buf, ")");
 }
 
 /*
@@ -165,6 +190,9 @@ emitter_gen_symref(struct node_symref *ref)
 
     /* handle `action` and `procedure` with 0 arguments. */
     strbuf_append(buf, "%s", ref->sym->name);
+    if (ref->args && ref->args->ary.size) {
+        emitter_gen_list_parens(ref->args);
+    }
 }
 
 /*
@@ -216,7 +244,7 @@ emitter_gen_if(struct node_if *nif)
     strbuf_append(buf, "if(");
     emitter_gen_node(nif->cond);
     strbuf_append(buf, ", ");
-    emitter_gen_list(nif->then);
+    emitter_gen_list_brackets(nif->then);
 
     strbuf_append(buf, ", ");
     if (nif->elseif_list->ary.size > 0) {
@@ -228,16 +256,16 @@ emitter_gen_if(struct node_if *nif)
             strbuf_append(buf, "if(");
             emitter_gen_node(nelse_if->cond);
             strbuf_append(buf, ", ");
-            emitter_gen_list(nelse_if->then);
+            emitter_gen_list_brackets(nelse_if->then);
             strbuf_append(buf, ", ");
         }
 
-        emitter_gen_list(nif->alt);
+        emitter_gen_list_brackets(nif->alt);
         while (i--) {
             strbuf_append(buf, ")");
         }
     } else {
-        emitter_gen_list(nif->alt);
+        emitter_gen_list_brackets(nif->alt);
     }
     strbuf_append(buf, ")");
 }
@@ -256,6 +284,9 @@ emitter_gen_value(struct node *nval)
         } else {
             strbuf_append(buf, "true");
         }
+    }
+    else {
+        strbuf_append(buf, "%d", nval->val.u.int_val);
     }
 }
 
@@ -276,8 +307,21 @@ emitter_gen_cond_block(struct node_cond_block *cond_block)
     }
     emitter_gen_node(cond_block->cond);
     strbuf_append(buf, ", ");
-    emitter_gen_list(cond_block->body);
+    emitter_gen_list_brackets(cond_block->body);
     strbuf_append(buf, ")");
+}
+
+/*
+ * Generate a op (inside an expression).
+ */
+void
+emitter_gen_op(struct node_expr *op)
+{
+    assert(op);
+
+    emitter_gen_node(op->left);
+    strbuf_append(buf, " %s ", op->operator);
+    emitter_gen_node(op->right);
 }
 
 /*

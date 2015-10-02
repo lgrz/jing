@@ -20,6 +20,7 @@ yylex(void);
     struct node *node;
     struct symbol *sym;
     int num;
+    char *chars;
 }
 
 %token LACTION
@@ -44,6 +45,10 @@ yylex(void);
        LANDAND
        LREL
        LFUN
+       LLT
+       LGT
+       LLTE
+       LGTE
 
 %token LNUMBER
        LNAME
@@ -60,12 +65,13 @@ yylex(void);
 %type <node> pick_stmt search_stmt interrupt_stmt
 %type <node> ndet_stmt conc_stmt pconc_stmt
 %type <node> or_list or_item
-%type <node> expr
-%type <node> psuedo_expr formula_expr
+%type <node> jing_expr expr op
+%type <node> pseudo_expr formula_stmt
 %type <node> stmt common_dcl simple_stmt complex_stmt compound_stmt empty_stmt
 
 %type <sym> LNAME LVARIABLE
 %type <num> LNUMBER
+%type <chars> LLT LGT LLTE LGTE
 
 %left LOROR
 %left LANDAND
@@ -92,8 +98,8 @@ empty_stmt: term
                 }
 ;
 
-simple_stmt: psuedo_expr
-           | formula_expr
+simple_stmt: pseudo_expr
+           | formula_stmt
 ;
 
 complex_stmt: if_stmt
@@ -114,13 +120,13 @@ compound_stmt: '{' opt_stmt_list '}'
                 }
 ;
 
-if_stmt: LIF '(' expr ')' compound_stmt elseif_list else
+if_stmt: LIF '(' jing_expr ')' compound_stmt elseif_list else
         {
             $$ = node_if_new($3, $5, $6, $7);
         }
 ;
 
-elseif: LELSE LIF '(' expr ')' compound_stmt
+elseif: LELSE LIF '(' jing_expr ')' compound_stmt
         {
             $$ = node_if_new($4, $6, NULL, NULL);
         }
@@ -146,7 +152,7 @@ else:
     }
 ;
 
-while_stmt: LWHILE '(' expr ')' compound_stmt
+while_stmt: LWHILE '(' jing_expr ')' compound_stmt
             {
                 $$ = node_while_new($3, $5);
             }
@@ -175,11 +181,11 @@ search_stmt: LSEARCH compound_stmt
             }
 ;
 
-interrupt_stmt: LINTERRUPT '(' expr ')' compound_stmt
+interrupt_stmt: LINTERRUPT '(' jing_expr ')' compound_stmt
                 {
                     $$ = node_interrupt_new($3, $5);
                 }
-              | LINTERRUPT '(' expr ')' psuedo_expr
+              | LINTERRUPT '(' jing_expr ')' pseudo_expr
                 {
                     struct node *list = node_list_new();
                     node_list_add(list, $5);
@@ -240,28 +246,28 @@ or_item: LOR compound_stmt
             }
 ;
 
-formula_expr: '?' '(' expr ')'
+formula_stmt: '?' '(' jing_expr ')'
               {
               }
 ;
 
-expr: '~' expr
+jing_expr: '~' jing_expr
     {
         yyerror("`~` not implemented");
     }
-    | expr LOROR expr
+    | jing_expr LOROR jing_expr
     {
         yyerror("`||` not implemented");
     }
-    | expr LANDAND expr
+    | jing_expr LANDAND jing_expr
     {
         yyerror("`&&` not implemented");
     }
-    | '(' expr ')'
+    | '(' jing_expr ')'
     {
         yyerror("`()` not implemented");
     }
-    | psuedo_expr
+    | pseudo_expr
     {
         yyerror("`action/proc call` not implemented");
     }
@@ -273,9 +279,36 @@ expr: '~' expr
     {
         $$ = node_get_false();
     }
+    | expr
 ;
 
-psuedo_expr: LNAME
+expr: op LLT op
+    {
+        $$ = node_expr_new($2, $1, $3);
+    }
+    | op LGT op
+    {
+        $$ = node_expr_new($2, $1, $3);
+    }
+    | op LLTE op
+    {
+        $$ = node_expr_new($2, $1, $3);
+    }
+    | op LGTE op
+    {
+        $$ = node_expr_new($2, $1, $3);
+    }
+;
+
+op: pseudo_expr
+    | LNUMBER
+    {
+        $$ = node_get_int($1);
+    }
+;
+
+
+pseudo_expr: LNAME
                 {
                     $$ = node_symref_new($1, node_list_new());
 
@@ -309,6 +342,37 @@ psuedo_expr: LNAME
                         semcheck_errorl(@3, err_code, $$);
                     }
                 }
+;
+
+opt_arg_list:
+        {
+            $$ = NULL;
+        }
+            | arg_list_r
+;
+
+arg_list_r: arg
+            {
+                $$ = NULL;
+                if (NULL != $1) {
+                    $$ = node_list_new();
+                    node_list_add($$, $1);
+                }
+            }
+       | arg_list_r ',' arg
+            {
+                $$ = $1;
+                if (NULL != $3) {
+                    node_list_add($$, $3);
+                }
+            }
+;
+
+arg: pseudo_expr
+    | LNUMBER
+    {
+        $$ = node_get_int($1);
+    }
 ;
 
 xdcl: common_dcl
@@ -428,23 +492,6 @@ var: LVARIABLE
     }
 ;
 
-arg_list_r: arg
-              {
-                $$ = node_list_new();
-                node_list_add($$, $1);
-              }
-          | arg_list_r ',' arg
-              {
-                $$ = $1;
-                node_list_add($$, $3);
-              }
-;
-
-arg: LNAME
-    {
-        $$ = node_symref_new($1, node_list_new());
-    }
-;
 
 /* optional */
 opt_xdcl_list:
@@ -471,15 +518,6 @@ opt_var_list:
         }
 ;
 
-opt_arg_list:
-                {
-                    $$ = node_list_new();
-                }
-            | arg_list_r
-                {
-                    $$ = $1;
-                }
-;
 
 term: ';'
 ;

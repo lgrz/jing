@@ -22,13 +22,15 @@
 struct symbol;
 
 enum val_type {
-    VAL_BOOL
+    VAL_BOOL,
+    VAL_INT
 };
 
 struct value {
     uint8_t vtype;
     union {
         uint8_t bool_val;
+        size_t int_val;
     } u;
 };
 
@@ -43,12 +45,14 @@ enum node_type {
     NODE_VAL,
     NODE_INTERRUPT,
     NODE_WHILE,
+    NODE_EXPR,
     NODE_ITER,
     NODE_CITER,
     NODE_NDET,
     NODE_CONC,
     NODE_PCONC,
-    NODE_OR
+    NODE_OR,
+    NODE_NUM
 };
 
 struct node {
@@ -99,6 +103,18 @@ struct node_cond_block {
     struct node_list *body;
 };
 
+struct node_expr {
+    uint8_t type;
+    char *operator;
+    struct node *left;
+    struct node *right;
+};
+
+struct node_num {
+	uint8_t type;
+	int num;
+};
+
 struct node *
 node_proc_new(struct symbol *sym, struct node *n);
 
@@ -135,6 +151,12 @@ node_while_new(struct node *cond, struct node *body);
 
 struct node_cond_block *
 node_cond_block_new(struct node *cond, struct node *body);
+
+struct node *
+node_get_int(int number);
+
+struct node *
+node_expr_new(char *operator, struct node *left, struct node *right);
 
 struct node *
 node_get_true(void);

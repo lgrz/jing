@@ -45,8 +45,6 @@ node_symref_new(struct symbol *sym, struct node *args)
 {
     struct node_symref *symref;
 
-    assert(args);
-
     symref = bmalloc(sizeof(*symref));
     symref->type = NODE_SYMREF;
     symref->sym = sym;
@@ -182,6 +180,36 @@ node_cond_block_new(struct node *cond, struct node *body)
 }
 
 /*
+ * Create an `op` node.
+ */
+struct node *
+node_expr_new(char *operator, struct node *left, struct node *right)
+{
+    struct node_expr *op = bmalloc(sizeof(*op));
+    op->type = NODE_EXPR;
+    op->operator = operator;
+    op->left = left;
+    op->right = right;
+
+    return (struct node *)op;
+}
+
+/*
+ * Create a node to hold a number.
+ */
+struct node *
+node_get_int(int number)
+{
+    struct node *nnum = bmalloc(sizeof(*nnum));
+
+    nnum->type = NODE_VAL;
+    nnum->val.vtype = VAL_INT;
+    nnum->val.u.int_val = number;
+
+    return nnum;
+}
+
+/*
  * Node value `true`.
  */
 struct node *
@@ -302,6 +330,16 @@ node_free(void *del)
             node_free(cond_block->cond);
             node_free(cond_block->body);
         }
+        break;
+    case NODE_EXPR:
+    {
+        struct node_expr *op = (struct node_expr *)n;
+        free(op->operator);
+        node_free(op->left);
+        node_free(op->right);
+    }
+        break;
+    case NODE_NUM:
         break;
     case NODE_NIL:
     default:

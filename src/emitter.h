@@ -34,6 +34,12 @@ void
 emitter_gen_list(struct node_list *list);
 
 void
+emitter_gen_list_brackets(struct node_list *list);
+
+void
+emitter_gen_list_parens(struct node_list *list);
+
+void
 emitter_gen_symref(struct node_symref *ref);
 
 void
@@ -47,6 +53,9 @@ emitter_gen_value(struct node *nval);
 
 void
 emitter_gen_cond_block(struct node_cond_block *cond_block);
+
+void
+emitter_gen_op(struct node_expr *op);
 
 void
 emitter_gen_multistmt(struct node_comstmt *stmt, const char *string,
