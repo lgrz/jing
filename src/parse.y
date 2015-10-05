@@ -284,6 +284,12 @@ psuedo_expr: LNAME
                     if (semcheck_is_error(err_code)) {
                         semcheck_errorl(@1, err_code, $$);
                     }
+
+                    /* check argument count */
+                    err_code = semcheck_sym_args($$);
+                    if (semcheck_is_error(err_code)) {
+                        semcheck_errorl(@1, err_code, $$);
+                    }
                 }
            | LNAME '(' opt_arg_list ')'
                 {

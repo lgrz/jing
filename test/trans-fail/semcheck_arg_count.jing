@@ -6,6 +6,7 @@
 // that was distributed with this source code.
 
 action foo: 0;
+action baz: 1;
 
 procedure proc_with_no_args() {}
 procedure proc_with_arg(A) {}
@@ -13,6 +14,7 @@ procedure proc_with_arg(A) {}
 procedure test_args() {
     bar; // ERROR unresolved action `bar`
     foo(a); // ERROR `foo` takes 0 parameters but found 1
+    baz; // ERROR `baz` takes 1 parameters but found 0
     proc_with_no_args(b); // ERROR `proc_with_no_args` takes 0 parameters but found 1
     proc_with_arg(); // ERROR `proc_with_arg` takes 1 parameters but found 0
 }
