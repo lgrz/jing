@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "jing.h"
 #include "strbuf.h"
@@ -21,6 +22,15 @@ ntop = NULL;
 
 static char *
 infile = NULL;
+
+static char
+outfile[256] = { 0 };
+
+static int
+parse_opt(int argc, char **argv);
+
+static void
+usage(void);
 
 /*
  * Display error with line number.
@@ -84,13 +94,10 @@ int
 main(int argc, char **argv)
 {
     char *ptr;
+    FILE *fp_out = stdout;
 
-    if (2 != argc) {
-        fprintf(stderr, "usage: jing2indigo file.jing\n");
-        exit(EXIT_FAILURE);
-    }
+    parse_opt(argc, argv);
 
-    infile = argv[1];
     if (!(yyin = fopen(infile, "r"))) {
         perror("fopen");
         exit(EXIT_FAILURE);
@@ -112,8 +119,59 @@ main(int argc, char **argv)
         error_exit();
     }
 
-    fprintf(stdout, "%s", emitter_get_str());
+    if ('\0' != outfile[0]) {
+        if (!(fp_out = fopen(outfile, "w"))) {
+            fprintf(stderr, "error: %s ", outfile);
+            perror(NULL);
+            error_exit();
+        }
+    }
+
+    fprintf(fp_out, "%s", emitter_get_str());
     jing_destroy();
 
     return 0;
+}
+
+/*
+ * Parse commandline options.
+ */
+static int
+parse_opt(int argc, char **argv)
+{
+    int ch;
+
+    if (argc < 2) {
+        usage();
+    }
+
+    while ((ch = getopt(argc, argv, "o:")) != -1) {
+        switch (ch) {
+        case 'o':
+            strncpy(outfile, optarg, 255);
+            break;
+        case '?':
+        default:
+            usage();
+        }
+    }
+
+    argc -= optind;
+    /* check infile is specified */
+    if (argc < 1) {
+        usage();
+    }
+    infile = argv[optind];
+
+    return optind;
+}
+
+/*
+ * Display program usage.
+ */
+static void
+usage(void)
+{
+    fprintf(stderr, "usage: jing2indigo [-o output] file.jing\n");
+    exit(EXIT_FAILURE);
 }
