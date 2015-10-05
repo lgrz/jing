@@ -1,0 +1,28 @@
+// This file is a part of Jing.
+//
+// Copyright (c) 2015 The Jing Authors.
+//
+// For the full copyright and license information, please view the LICENSE file
+// that was distributed with this source code.
+
+prolog a: 0;
+prolog b: 1;
+
+rel fluent c: 0;
+rel fluent d: 1;
+
+fun fluent e: 0;
+fun fluent f: 1;
+
+procedure test_action() {
+    foo; // ERROR unresolved action `foo`
+
+    a; // ERROR unresolved action `a`
+    b; // ERROR unresolved action `b`
+
+    c; // ERROR unresolved action `c`
+    d(a); // ERROR unresolved name `d`
+
+    e; // ERROR unresolved action `e`
+    f(a); // ERROR unresolved name `f`
+}
