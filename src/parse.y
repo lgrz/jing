@@ -175,8 +175,14 @@ citer_stmt: LCITER compound_stmt
             }
 ;
 
-pick_stmt: LPICK '<' var_list_r '>' compound_stmt
+pick_stmt: LPICK var_list_r
             {
+                stack_push($2);
+            }
+            compound_stmt
+            {
+                $$ = node_pick_new($2, $4);
+                stack_pop($2);
             }
 ;
 

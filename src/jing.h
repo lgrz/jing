@@ -16,6 +16,7 @@
 #include "symtab.h"
 #include "emitter.h"
 #include "semcheck.h"
+#include "stack.h"
 #include "y.tab.h"
 
 extern struct node *

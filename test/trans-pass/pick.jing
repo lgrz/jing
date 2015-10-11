@@ -1,0 +1,32 @@
+// This file is a part of Jing.
+//
+// Copyright (c) 2015 The Jing Authors.
+//
+// For the full copyright and license information, please view the LICENSE file
+// that was distributed with this source code.
+
+// EXPECTED OUTPUT
+// proc(test_pick, [pi(X, pi(Y, [pi(A, pi(B, [a, b, c]))])), pi(A, [c, pi(B, [d, e])])]).
+
+action a: 0;
+action b: 0;
+action c: 0;
+action d: 0;
+action e: 0;
+
+procedure test_pick() {
+    pick X, Y {
+        pick A, B {
+           a;
+           b;
+           c;
+        }
+    }
+    pick A {
+        c;
+        pick B {
+            d;
+            e;
+        }
+    }
+}

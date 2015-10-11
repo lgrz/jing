@@ -81,6 +81,13 @@ emitter_gen_node(struct node *n)
     case NODE_SEARCH:
         emitter_gen_block((struct node_block *)n, "search");
         break;
+    case NODE_PICK:
+        {
+            struct node_pick *pick = (struct node_pick *)n;
+            size_t count = pick->vars->ary.size;
+            emitter_gen_pick(pick, count, count);
+        }
+        break;
     case NODE_NDET:
         {
             struct node_block *blk = (struct node_block *)n;
@@ -225,6 +232,27 @@ emitter_gen_block(struct node_block *blk, const char *hdr)
         emitter_gen_node((struct node *)blk->body);
     } else {
         strbuf_append(buf, "[]");
+    }
+    strbuf_append(buf, ")");
+}
+
+/*
+ * Generate a 'pick' statement.
+ */
+void
+emitter_gen_pick(struct node_pick *pick, size_t count, size_t left)
+{
+    assert(pick);
+    assert(pick->vars);
+    assert(pick->body);
+
+    strbuf_append(buf, "pi(");
+    emitter_gen_node(pick->vars->ary.data[count-left]);
+    strbuf_append(buf, ", ");
+    if (left == 1) {
+        emitter_gen_node((struct node *)pick->body);
+    } else {
+        emitter_gen_pick(pick, count, left-1);
     }
     strbuf_append(buf, ")");
 }

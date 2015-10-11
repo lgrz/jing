@@ -50,6 +50,9 @@ void
 emitter_gen_block(struct node_block *blk, const char *hdr);
 
 void
+emitter_gen_pick(struct node_pick *pick, size_t count, size_t left);
+
+void
 emitter_gen_if(struct node_if *nif);
 
 void

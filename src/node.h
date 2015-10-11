@@ -49,6 +49,7 @@ enum node_type {
     NODE_SYMREF,
     NODE_LIST,
     NODE_COMDCL,
+    NODE_PICK,
     NODE_SEARCH,
     NODE_IF,
     NODE_VAL,
@@ -111,6 +112,12 @@ struct node_cond_block {
     struct node_list *body;
 };
 
+struct node_pick {
+    uint8_t type;
+    struct node_list *vars;
+    struct node_list *body;
+};
+
 struct node_op {
     uint8_t type;
     enum op_type otype;
@@ -147,6 +154,9 @@ node_comdcl_new(enum type stype, struct symbol *sym, uint8_t arity);
 
 struct node *
 node_block_new(enum node_type type, struct node *body);
+
+struct node *
+node_pick_new(struct node *vars, struct node *body);
 
 struct node *
 node_if_new(struct node *cond, struct node *then, struct node *elseif_list,

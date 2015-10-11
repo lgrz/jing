@@ -135,6 +135,21 @@ node_block_new(enum node_type type, struct node *body)
 }
 
 /*
+ * Create a 'pick' node.
+ */
+struct node *
+node_pick_new(struct node *vars, struct node *body)
+{
+    struct node_pick *pick = bmalloc(sizeof(*pick));
+
+    pick->type = NODE_PICK;
+    pick->vars = (struct node_list *)vars;
+    pick->body = (struct node_list *)body;
+
+    return (struct node *)pick;
+}
+
+/*
  * Create an `if` node.
  */
 struct node *
@@ -315,6 +330,13 @@ node_free(void *del)
         break;
     case NODE_COMDCL:
         /* unused */
+        break;
+    case NODE_PICK:
+        {
+            struct node_pick *pick = (struct node_pick *)n;
+            node_free(pick->vars);
+            node_free(pick->body);
+        }
         break;
     case NODE_VAL:
         {
