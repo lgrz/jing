@@ -65,16 +65,17 @@ yylex(void);
 %type <node> pick_stmt search_stmt interrupt_stmt
 %type <node> ndet_stmt conc_stmt pconc_stmt
 %type <node> or_list or_item
-%type <node> jing_expr expr op
+%type <node> jing_expr expr
 %type <node> pseudo_expr formula_stmt
 %type <node> stmt common_dcl simple_stmt complex_stmt compound_stmt empty_stmt
 
 %type <sym> LNAME LVARIABLE
 %type <num> LNUMBER
-%type <chars> LLT LGT LLTE LGTE
+%type <chars> LLT LLTE LGT LGTE
 
 %left LOROR
 %left LANDAND
+%left LLT LLTE LGT LGTE
 %right '~'
 
 %%
@@ -267,10 +268,7 @@ jing_expr: '~' jing_expr
     {
         yyerror("`()` not implemented");
     }
-    | pseudo_expr
-    {
-        yyerror("`action/proc call` not implemented");
-    }
+    | expr
     | LTRUE
     {
         $$ = node_get_true();
@@ -279,34 +277,30 @@ jing_expr: '~' jing_expr
     {
         $$ = node_get_false();
     }
-    | expr
 ;
 
-expr: op LLT op
+expr: expr LLT expr
     {
         $$ = node_expr_new($2, $1, $3);
     }
-    | op LGT op
+    | expr LGT expr
     {
         $$ = node_expr_new($2, $1, $3);
     }
-    | op LLTE op
+    | expr LLTE expr
     {
         $$ = node_expr_new($2, $1, $3);
     }
-    | op LGTE op
+    | expr LGTE expr
     {
         $$ = node_expr_new($2, $1, $3);
     }
-;
-
-op: pseudo_expr
+    | pseudo_expr
     | LNUMBER
     {
         $$ = node_get_int($1);
     }
 ;
-
 
 pseudo_expr: LNAME
                 {
