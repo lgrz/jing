@@ -31,6 +31,7 @@ enum error_code {
     E0001, /* unresolved name */
     E0002, /* unresolved action */
     E0003, /* argument count mismatch */
+    E0004,  /* unresolved variable */
     E0010, /* integer as unary expression */
     E0011, /* predicate (callable) used in expression */
     E0012, /* rel fluent to binary operand */
@@ -42,6 +43,9 @@ semcheck_is_error(enum error_code err);
 
 void
 semcheck_errorl(YYLTYPE t, enum error_code err, struct node *n);
+
+enum error_code
+semcheck_pick_args(struct node_symref *arg);
 
 enum error_code
 semcheck_sym_args(struct node *n);

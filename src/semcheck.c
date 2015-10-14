@@ -8,6 +8,7 @@
  */
 
 #include "semcheck.h"
+#include "stack.h"
 
 /*
  * Lookup the argument count in the symbol definition.
@@ -81,6 +82,9 @@ semcheck_errorl(YYLTYPE t, enum error_code err, struct node *n)
         yyerrorl(t, "`%s` takes %d parameters but found %d", name,
                 semcheck_get_args(ref->sym), ref->args->ary.size);
         break;
+    case E0004:
+        yyerrorl(t, "unresolved variable `%s`", name);
+        break;
     case E0010:
         yyerrorl(t, "invalid unary expression, found integer `%ld`",
                 n->val.u.int_val);
@@ -99,6 +103,18 @@ semcheck_errorl(YYLTYPE t, enum error_code err, struct node *n)
     default:
         yyerrorl(t, "unhandled error code %d", err);
     }
+}
+
+/*
+ * Check any variables in a `pick` block belong in the stack.
+ */
+enum error_code
+semcheck_pick_args(struct node_symref *arg)
+{
+    if (stack_search(arg->sym) == NULL) {
+        return E0004;
+    }
+    return ENONE;
 }
 
 /*

@@ -6,26 +6,26 @@
 // that was distributed with this source code.
 
 // EXPECTED OUTPUT
-// proc(test_pick, [pi(X, pi(Y, [pi(A, pi(B, [a, b, c]))])), pi(A, [c, pi(B, [d, e])])]).
+// proc(test_pick, [pi(X, pi(Y, [pi(A, pi(B, [a(X), b(A), c]))])), pi(A, [c, pi(B, [d(B), e])])]).
 
-action a: 0;
-action b: 0;
+action a: 1;
+action b: 1;
 action c: 0;
-action d: 0;
+action d: 1;
 action e: 0;
 
 procedure test_pick() {
-    pick X, Y {
-        pick A, B {
-           a;
-           b;
+    pick #X, #Y {
+        pick #A, #B {
+           a(#X);
+           b(#A);
            c;
         }
     }
-    pick A {
+    pick #A {
         c;
-        pick B {
-            d;
+        pick #B {
+            d(#B);
             e;
         }
     }

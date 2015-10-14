@@ -60,6 +60,7 @@ yylex(void);
 %type <node> opt_stmt_list stmt_list_r
 %type <node> opt_arg_list arg_list_r arg
 %type <node> opt_var_list var_list_r var
+%type <node> pick_var_list_r
 %type <node> xproc_dcl proc_dcl
 %type <node> action_dcl rel_fluent_dcl fun_fluent_dcl prolog_dcl
 %type <node> if_stmt elseif_list elseif else
@@ -175,7 +176,7 @@ citer_stmt: LCITER compound_stmt
             }
 ;
 
-pick_stmt: LPICK var_list_r
+pick_stmt: LPICK pick_var_list_r
             {
                 stack_push($2);
             }
@@ -348,6 +349,16 @@ pseudo_expr: dcl_expr
             {
                 $$ = node_get_false();
             }
+           | '#' LVARIABLE
+           {
+                enum error_code err_code = ENONE;
+                $$ = node_symref_new($2, node_list_new());
+
+                err_code = semcheck_pick_args((struct node_symref *)$$);
+                if (semcheck_is_error(err_code)) {
+                    semcheck_errorl(@1, err_code, $$);
+                }
+           }
 ;
 
 dcl_expr: LNAME '(' opt_arg_list ')'
@@ -515,6 +526,18 @@ arg_list_r: arg
 arg: pseudo_expr
 ;
 
+pick_var_list_r: '#' var
+               {
+                    $$ = node_list_new();
+                    node_list_add($$, $2);
+               }
+               | pick_var_list_r ',' '#' var
+               {
+                    $$ = $1;
+                    node_list_add($$, $4);
+               }
+;
+
 /* optional */
 opt_xdcl_list:
                  {
@@ -549,7 +572,6 @@ opt_var_list:
             $$ = $1;
         }
 ;
-
 
 term: ';'
 ;
