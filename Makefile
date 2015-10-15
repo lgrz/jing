@@ -21,6 +21,7 @@ CHECK_FULL = $(CHECK_QUICK) check-tvalgrind
 .PHONY: all
 all: $(TARGET)
 
+debug: YACC := $(YACC) -v
 debug: CFLAGS := $(CFLAGS:-O%=)
 debug: CC := $(CC) $(DEBUG_CFLAGS)
 debug: all
@@ -74,6 +75,6 @@ check-tvalgrind: $(TPASS_TESTS) $(TARGET)
 clean: | local.mk
 	$(MAKE) -C $(TESTDIR) $@
 	$(RM) $(TARGET) $(OBJ) $(DEP) \
-		src/lex.yy.c src/y.tab.{c,h}
+		src/lex.yy.c src/y.tab.{c,h} src/y.output
 
 -include $(DEP)

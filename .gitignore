@@ -2,6 +2,7 @@
 *.d
 jing2indigo
 src/lex.yy.c
+src/y.output
 src/y.tab.c
 src/y.tab.h
 local.mk
