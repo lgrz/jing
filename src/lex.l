@@ -11,6 +11,8 @@
 %option yylineno
 %option nodefault
 
+%x COMMENT
+
 %{
 #include "jing.h"
 
@@ -66,6 +68,11 @@ int yycolumn = 1;
 [A-Z][a-zA-Z0-9_]* { yylval.sym = symtab_lookup(yytext); return LVARIABLE; }
 
 [0-9]+  { yylval.num = atoi(yytext); return LNUMBER; }
+
+<INITIAL>"/*"           { BEGIN(COMMENT); }
+<COMMENT>"*/"           { BEGIN(INITIAL); }
+<COMMENT>([^*]|\n)+|.
+<COMMENT><<EOF>>        { yyerror("unterminated comment"); error_exit(); }
 
 "//".*
 [ \t]
