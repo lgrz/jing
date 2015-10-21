@@ -121,3 +121,104 @@ can be found in the [IndiGolog documentation][indg_docs].
 
 [situation_calculus]: https://en.wikipedia.org/wiki/Situation_calculus
 [indg_docs]: https://bitbucket.org/ssardina/indigolog
+
+
+### Going further: vacuum world example
+
+Let's look at some more of the syntax and language features by looking at a
+more interesting agent program.
+
+The following program models the vacuum world problem. In this particular model
+of the vacuum world there are two rooms that can be either dirty or clean. A
+vacuum cleaner robot starts in room 1 (the left room) and room 1 is already
+clean and room 2 is dirty. The agent can perform 4 simple actions: move left,
+move right, suck and power down. The agent's goals are to clean dirty rooms
+and, if there are no more rooms left to clean it will power itself down to save
+its battery.
+
+```
+action left: 0;
+action right: 0;
+action suck: 1;
+action power_down: 0;
+
+rel fluent location: 0;
+rel fluent room: 1;
+
+prolog some: 2;
+prolog is_dirty: 1;
+prolog in_location: 1;
+
+procedure go_room(N) {
+    while (~in_location(N)) {
+        if (location < N) {
+            right;
+        } else {
+            left;
+        }
+    }
+}
+
+procedure clean_a_room() {
+    pick #n {
+        ?(is_dirty(#n));
+        go_room(#n);
+        suck(#n);
+    }
+}
+
+procedure control() {
+    while (some(n, is_dirty(n))) {
+        clean_a_room;
+    }
+    power_down;
+}
+```
+
+At the top of the file there are some delcarations. There are four kinds of
+declarations:
+
+* action
+* relational fluent
+* functional fluent
+* prolog
+
+An `action` is something the agent can perform in its environment. Here our
+agent can perform the actions `left`, `right`, `suck` and `power_down`. For the
+action `suck` we've specified that it takes 1 argument, the room in which the
+suck action is performed.
+
+A relational fluent can be considered a variable that changes depending on the
+current state of the world, for example as the vacuum agent moves between rooms
+the `location` fluent will change to reflect the agent's current location.
+Relational fluents can be seen as taking on a range of values (i.e. they are
+continuous).
+
+Functional fluents are similar to relational fluents, however they can only be
+either true or false.
+
+The `prolog` declaration provides a way to 'import' Prolog predicates that can
+be used within a program. The term import is used very loosely here. There is
+no importing performed, we just tell Jing to assume that the declared predicate
+exists in Prolog or IndiGolog elsewhere.
+
+We can see that even for declarations that do not take any arguments we still
+must specify the number of arguments (perhaps a syntactical limitation at this
+stage). We only need to know the arity in these declarations because Prolog is
+dynamically typed and the definitions are located elsewhere (in addtional
+IndiGolog code that is required when running IndiGolog programs, however this
+is beyond the scope of this guide).
+
+In the `clean_a_room` procedure there are some things we haven't touched on
+yet. The `pick` construct is used to nondeterministrically bind a variable to
+the statements contained within the `{}` and, if successful execute those
+statements. The variable to be bound by the `pick` statement is declared with a
+`#` symbol. This example shows a variable `n` is declared and if the room `n`
+is dirty then the agent will go the room `n` and clean it.
+
+Also within this `pick` block of code we can see the `?(...)` syntax. This is
+the formula statement and it is used to test if a condition is true or false,
+similar to an `if` statement, however there is no branching in the formula
+statement and in this case if the `is_dirty(#n)` evaluates to false the
+statements in the `pick` block that come after the formula statement will not
+be executed.
