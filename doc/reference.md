@@ -23,7 +23,6 @@ procedure
 prolog
 rel
 search
-skip
 true
 while
 ```
