@@ -214,7 +214,7 @@ yet. The `pick` construct is used to nondeterministrically bind a variable to
 the statements contained within the `{}` and, if successful execute those
 statements. The variable to be bound by the `pick` statement is declared with a
 `#` symbol. This example shows a variable `n` is declared and if the room `n`
-is dirty then the agent will go the room `n` and clean it.
+is dirty then the agent will go to the room `n` and clean it.
 
 Also within this `pick` block of code we can see the `?(...)` syntax. This is
 the formula statement and it is used to test if a condition is true or false,
@@ -222,3 +222,59 @@ similar to an `if` statement, however there is no branching in the formula
 statement and in this case if the `is_dirty(#n)` evaluates to false the
 statements in the `pick` block that come after the formula statement will not
 be executed.
+
+
+### Expressions
+
+The expression syntax in Jing is complete in some areas and still needs more
+work in others. We'll highlight where this is the case in the details below.
+
+
+#### Logical operators
+
+Jing provides expression support for logical operations that are defined in the
+IndiGolog language as `and/2`, `or/2` and `neg/1`.
+
+In Jing the logical operators appear much the same way as they do in a Java
+like syntax:
+
+    if (~a && b || c) {
+        // ...
+    }
+
+
+#### Prolog expressions
+
+It is common for IndiGolog programs to make use of Prolog expressions and
+operators to perform various tasks. Jing provides limited support for such
+expressions at this time. Current support extends to the following operators:
+`<`, `<=`, `>`, `>=`.
+
+If you find you need support for an operator not in the above list, for example
+unification `=`, a work around is to wrap the operator into a predicate and
+import it via the `prolog` declaration described earlier.
+
+
+### Semantic checks
+
+There are a number of semantic checks performed during translation of a Jing
+program, here we highlight some of the key semantic checks that are performed.
+
+* Use of an action limited to only as a [sequence statement][structured_prog].
+* Use of a `rel fluent` is limited to only as a [selection
+  statement][structured_prog] with the added restriction that it must be used
+  with a relational operator i.e. an operator that takes two arguments. For
+  example the `>` operator takes two arguments. What this also means is that we
+  can't use a `rel fluent` as an unary expression.
+* Use of a `fun fluent` is limited to a [selection statement][structured_prog]
+  with the added restriction that it must be as a unary expression.
+* Attemtping to use undeclared `pick` variables will result in an error.
+* The number of arguments passed to an `action` or `procedure` must match with
+  the definition.
+
+[structured_prog]: https://en.wikipedia.org/wiki/Structured_programming#Control_structures
+
+
+### Examples
+
+More examples of Jing programs can be found in the 'examples' directory.
