@@ -1,6 +1,84 @@
 The Jing Language Reference
 ===========================
 
+## Testing
+
+The project is configured with both unit tests and integration tests.
+[CPPUTEST][cpputest] is used for the unit tests and a series of custom Python
+scripts are used to run the integration tests.
+
+
+### Setup CPPUTEST
+
+To be able to run the unit tests CPPUTEST must be installed and some
+configuration of the build system is in order. The following steps should be
+enough to get up and running with CPPUTEST:
+
+1. C++
+
+    CPPUTEST requires a C++ compiler to run so make sure you have one
+    installed before proceeding further.
+
+2. Install CPPUTEST
+
+    You may be able to install CPPUTEST via your package manager or, you can
+    follow the instructions in the [CPPUTEST documentation][cpputest] to build
+    it from source.
+
+3. Run `make local.mk`
+
+    This will create a file 'local.mk' in the root of the project that is used
+    to customise the path to CPPUTEST as the location CPPUTEST is installed may
+    not be same across different systems.
+
+4. Set the `CPPUTEST_PATH` in the file 'local.mk'.
+
+    Within the 'local.mk' file update the make variable `CPPUTEST_PATH` with
+    the path to where CPPUTEST was installed. For example
+    `CPPUTEST_PATH=/usr/local`.
+
+5. Run `make check-jing`
+
+    This will build and run the unit tests and you should see some test output
+    on the console. If you got this far great! CPPUTEST is setup and
+    configured.
+
+[cpputest]: https://cpputest.github.io
+
+
+### Running the tests
+
+All of the tests can be run via various make targets which are explained below.
+
+The available test targets are:
+
+
+1. Run the unit tests:
+
+        make check-jing
+
+2. Run the passing tests located in 'test/trans-pass':
+
+        make check-tpass
+
+3. Run the failing tests located in 'test/trans-fail':
+
+        make check-tfail
+
+4. Runs all passing tests in 'test/trans-pass' through valgrind to check for
+   memory leaks:
+
+        make check-tvalgrind
+
+5. Run all tests except the valgrind tests:
+
+        make check
+
+6. Run all tests including the valgrind tests:
+
+        make check-full
+
+
 ## Identifiers
 
 ### Keywords
