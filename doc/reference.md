@@ -95,6 +95,7 @@ if
 interrupt
 iter
 ndet
+or
 pconc
 pick
 procedure
@@ -130,7 +131,7 @@ stmt = common_dcl, term
 
 empty_stmt = term ;
 
-simple_stmt = psuedo_expr
+simple_stmt = pseudo_expr
             | formula_expr ;
 
 complex_stmt = if_stmt
@@ -146,54 +147,62 @@ complex_stmt = if_stmt
 
 compound_stmt = '{', opt_stmt_list, '}' ;
 
-if_stmt = 'if', '(', expr, ')', compound_stmt, elseif_list, else ;
+if_stmt = 'if', '(', jing_expr, ')', compound_stmt, elseif_list, else ;
 
-elseif = 'else', 'if', '(', expr, ')', compound_stmt ;
+elseif = 'else', 'if', '(', jing_expr, ')', compound_stmt ;
 
 elseif_list = { elseif_list, elseif } ;
 
 else = { 'else', compound_stmt } ;
 
-while_stmt = 'while', '(', expr, ')', compound_stmt ;
+while_stmt = 'while', '(', jing_expr, ')', compound_stmt ;
 
 iter_stmt = 'iter', compound_stmt ;
 
 citer_stmt = 'citer', compound_stmt ;
 
-pick_stmt = 'pick', '<', var_list_r, '>', compound_stmt ;
+pick_stmt = 'pick', pick_arg_list_r, compound_stmt ;
 
 search_stmt = 'search', compound_stmt ;
 
-interrupt_stmt = 'interrupt', '(', expr, ')', compound_stmt
-               | 'interrupt', '(', expr, ')', psuedo_expr ;
+interrupt_stmt = 'interrupt', '(', jing_expr, ')', compound_stmt
+               | 'interrupt', '(', jing_expr, ')', pseudo_expr ;
 
-ndet_stmt = 'ndet', '{', delta_pair, delta_list, '}' ;
+ndet_stmt = 'ndet', '{', compound_stmt, or_list, '}' ;
 
-conc_stmt = 'conc', '{', delta_pair, delta_list, '}' ;
+conc_stmt = 'conc', '{', compound_stmt, or_list, '}' ;
 
-pconc_stmt = 'pconc', '{', delta_pair, delta_list, '}' ;
+pconc_stmt = 'pconc', '{', compound_stmt, or_list, '}' ;
 
-delta_pair = delta_item, delta_item ;
+or_list = or_item
+        | or_list, or_item ;
 
-delta_item = delta_label, compound_stmt ;
-
-delta_label = name, '.' ;
+or_item = 'or', compound_stmt ;
 
 formula_expr = '?', '(', expr, ')' ;
 
-expr = '~', expr
-     | expr, '||', expr
-     | expr, '&&', expr
-     | '(', expr, ')'
-     | psuedo_expr
-     | "true"
-     | "false" ;
+jing_expr = '~', jing_expr
+          | jing_expr, '||', jing_expr
+          | jing_expr, '&&', jing_expr
+          | '(', jing_expr, ')'
+          | "true"
+          | "false"
+          | expr ;
 
-psuedo_expr = name
+expr = op, '>', op
+     | op, '<', op
+     | op, '>=', op
+     | op, '<=', op
+     | pseudo_expr ;
+
+op = pseudo_expr
+   | number ;
+
+pseudo_expr = name
             | name, '(', opt_arg_list, ')' ;
 
 xdcl = common_dcl
-     | xproc_dcl
+     | proc_dcl
      | term ;
 
 common_dcl = action_dcl
@@ -209,15 +218,16 @@ fun_fluent_dcl = 'fun' 'fluent', name, ':', number ;
 
 prolog_dcl = 'prolog', name, ':', number ;
 
-xproc_dcl = proc_dcl, compound_stmt ;
-
-proc_dcl = 'procedure', name, '(', opt_var_list, ')' ;
+proc_dcl = 'procedure', name, '(', opt_var_list, ')', compound_stmt ;
 
 xdcl_list_r = xdcl
             | xdcl_list_r, xdcl ;
 
 stmt_list_r = stmt
             | stmt_list_r, stmt ;
+
+pick_arg_list_r = '#' name
+                | pick_arg_list_r, '#' name ;
 
 var_list_r = var
            | var_list_r, ',', var ;
@@ -227,9 +237,10 @@ var: variable ;
 arg_list_r = arg
            | arg_list_r, ',', arg ;
 
-arg = name ;
-
-delta_list = { delta_list, delta_item } ;
+arg = pseudo_expr
+    | number
+    | variable
+    | '#' name ;
 
 opt_xdcl_list = { xdcl_list_r } ;
 
