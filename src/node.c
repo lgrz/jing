@@ -195,18 +195,18 @@ node_expr_new(char *operator, struct node *left, struct node *right)
 }
 
 /*
- * Create a node to hold a number.
+ * Create new integer.
  */
 struct node *
-node_get_int(int number)
+node_int_new(long n)
 {
-    struct node *nnum = bmalloc(sizeof(*nnum));
+    struct node *num = bmalloc(sizeof(*num));
 
-    nnum->type = NODE_VAL;
-    nnum->val.vtype = VAL_INT;
-    nnum->val.u.int_val = number;
+    num->type = NODE_VAL;
+    num->val.vtype = VAL_INT;
+    num->val.u.int_val = n;
 
-    return nnum;
+    return num;
 }
 
 /*

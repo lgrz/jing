@@ -206,8 +206,7 @@ emitter_gen_multistmt(struct node_comstmt *stmt, const char *string,
     strbuf_append(buf, ", ");
     if (stmts_left > 2) {
         emitter_gen_multistmt(stmt, string, stmts_left - 1);
-    }
-    else {
+    } else {
         emitter_gen_node((struct node *)stmt->body->ary.data[size-1]);
     }
     strbuf_append(buf, ")");
@@ -281,9 +280,8 @@ emitter_gen_value(struct node *nval)
         } else {
             strbuf_append(buf, "true");
         }
-    }
-    else {
-        strbuf_append(buf, "%d", nval->val.u.int_val);
+    } else {
+        strbuf_append(buf, "%ld", nval->val.u.int_val);
     }
 }
 

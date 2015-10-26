@@ -19,7 +19,7 @@ yylex(void);
 %union {
     struct node *node;
     struct symbol *sym;
-    int num;
+    long num;
     char *str;
 }
 
@@ -299,7 +299,7 @@ pseudo_expr: dcl_expr
             }
            | LNUMBER
             {
-                $$ = node_get_int($1);
+                $$ = node_int_new($1);
             }
            | LTRUE
             {

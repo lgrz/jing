@@ -30,7 +30,7 @@ struct value {
     uint8_t vtype;
     union {
         uint8_t bool_val;
-        size_t int_val;
+        long int_val;
     } u;
 };
 
@@ -147,7 +147,7 @@ struct node_cond_block *
 node_cond_block_new(struct node *cond, struct node *body);
 
 struct node *
-node_get_int(int number);
+node_int_new(long n);
 
 struct node *
 node_expr_new(char *operator, struct node *left, struct node *right);
