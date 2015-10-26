@@ -38,10 +38,10 @@ int yycolumn = 1;
 "(" |
 ")"         { return yytext[0]; }
 
-"<"         { yylval.chars = strdup(yytext); return LLT; }
-">"         { yylval.chars = strdup(yytext); return LGT; }
-"<="        { yylval.chars = strdup(yytext); return LLTE; }
-">="        { yylval.chars = strdup(yytext); return LGTE; }
+"<"         { yylval.str = strdup(yytext); return LLT; }
+">"         { yylval.str = strdup(yytext); return LGT; }
+"<="        { yylval.str = strdup(yytext); return LLTE; }
+">="        { yylval.str = strdup(yytext); return LGTE; }
 "||"        { return LOROR; }
 "&&"        { return LANDAND; }
 

@@ -20,7 +20,7 @@ yylex(void);
     struct node *node;
     struct symbol *sym;
     int num;
-    char *chars;
+    char *str;
 }
 
 %token LACTION
@@ -71,7 +71,7 @@ yylex(void);
 
 %type <sym> LNAME LVARIABLE
 %type <num> LNUMBER
-%type <chars> LLT LLTE LGT LGTE
+%type <str> LLT LLTE LGT LGTE
 
 %left LOROR
 %left LANDAND
