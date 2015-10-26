@@ -6,17 +6,47 @@
 // that was distributed with this source code.
 
 // EXPECTED OUTPUT
-// proc(test, [if(2 > 3, [a], []), if(4 >= 6, [b], []), if(1 < 2, [c], []), if(1 <= 2, [d], [])]).
+// proc(test_op_simple, [if(2 > 3, [a], []), if(4 >= 6, [b], []), if(1 < 2, [c], []), if(1 <= 2, [d], [])]).
+// proc(test_rel_fluent, [if(s, [a], [])]).
+// proc(test_fun_fluent, [if(t > 1, [b], [])]).
+// proc(test_prolog, [if(p, [a], []), if(q(true), [b], []), if(q(1), [c], []), if(q(s), [d], [])]).
+// proc(test_proc_arg, [if(N > 3, [a], []), if(Flag, [b], [])]).
 
 action a: 0;
 action b: 0;
 action c: 0;
 action d: 0;
 
-procedure test() {
+rel fluent s: 0;
+fun fluent t: 0;
+
+prolog p: 0;
+prolog q: 1;
+
+procedure test_op_simple() {
     if (2 > 3) { a; }
     if (4 >= 6) { b; }
-
     if (1 < 2) { c; }
     if (1 <= 2) { d; }
+}
+
+procedure test_rel_fluent() {
+    if (s) { a; }
+}
+
+procedure test_fun_fluent() {
+    if (t > 1) { b; }
+}
+
+procedure test_prolog() {
+    if (p) { a; }
+
+    if (q(true)) { b; }
+    if (q(1)) { c; }
+    if (q(s)) { d; }
+}
+
+procedure test_proc_arg(N, Flag) {
+    if (N > 3) { a; }
+    if (Flag) { b; }
 }
