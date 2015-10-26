@@ -50,14 +50,20 @@ semcheck_is_error(enum error_code err)
 void
 semcheck_errorl(YYLTYPE t, enum error_code err, struct node *n)
 {
-    struct node_symref *ref;
-    char *name;
+    struct node_symref *ref = NULL;
+    char *name = NULL;
 
     assert(n);
-    assert(n->type == NODE_SYMREF);
 
-    ref = (struct node_symref *)n;
-    name = ref->sym->name;
+    /*
+     * Fill variables required for `symref` error reporting.
+     */
+    if (NODE_SYMREF == n->type) {
+        ref = (struct node_symref *)n;
+        assert(ref->sym);
+        assert(ref->sym->name);
+        name = ref->sym->name;
+    }
 
     switch (err) {
     case E0001:
@@ -67,8 +73,12 @@ semcheck_errorl(YYLTYPE t, enum error_code err, struct node *n)
         yyerrorl(t, "unresolved action `%s`", name);
         break;
     case E0003:
+        assert(ref->args);
         yyerrorl(t, "`%s` takes %d parameters but found %d", name,
                 semcheck_get_args(ref->sym), ref->args->ary.size);
+        break;
+    case E0010:
+        yyerrorl(t, "integer as unary expression");
         break;
     default:
         yyerrorl(t, "unhandled error code %d", err);
@@ -144,4 +154,17 @@ semcheck_action_defined(struct symbol *sym)
     }
 
     return E0002;
+}
+
+/*
+ * Formula expression semantic checks.
+ */
+enum error_code
+semcheck_expr(struct node *n)
+{
+    if (NODE_VAL == n->type && VAL_INT == n->val.vtype) {
+        return E0010;
+    }
+
+    return ENONE;
 }

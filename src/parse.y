@@ -270,6 +270,15 @@ jing_expr: '~' jing_expr
         yyerror("`()` not implemented");
     }
     | expr
+    {
+        $$ = $1;
+
+        enum error_code err_code = ENONE;
+        err_code = semcheck_expr($$);
+        if (semcheck_is_error(err_code)) {
+            semcheck_errorl(@1, err_code, $$);
+        }
+    }
 ;
 
 expr: expr LLT expr

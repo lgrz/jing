@@ -30,7 +30,8 @@ enum error_code {
     ENONE = 0, /* no error */
     E0001, /* unresolved name */
     E0002, /* unresolved action */
-    E0003 /* argument count mismatch */
+    E0003, /* argument count mismatch */
+    E0010 /* integer as unary expression */
 };
 
 bool
@@ -47,5 +48,8 @@ semcheck_usercall_defined(struct symbol *sym);
 
 enum error_code
 semcheck_action_defined(struct symbol *sym);
+
+enum error_code
+semcheck_expr(struct node *n);
 
 #endif /* SEMCHECK_H */
