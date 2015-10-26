@@ -51,8 +51,7 @@ enum node_type {
     NODE_NDET,
     NODE_CONC,
     NODE_PCONC,
-    NODE_OR,
-    NODE_NUM
+    NODE_OR
 };
 
 struct node {
@@ -108,11 +107,6 @@ struct node_expr {
     char *operator;
     struct node *left;
     struct node *right;
-};
-
-struct node_num {
-	uint8_t type;
-	int num;
 };
 
 struct node *

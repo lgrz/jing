@@ -332,14 +332,12 @@ node_free(void *del)
         }
         break;
     case NODE_EXPR:
-    {
-        struct node_expr *op = (struct node_expr *)n;
-        free(op->operator);
-        node_free(op->left);
-        node_free(op->right);
-    }
-        break;
-    case NODE_NUM:
+        {
+            struct node_expr *op = (struct node_expr *)n;
+            free(op->operator);
+            node_free(op->left);
+            node_free(op->right);
+        }
         break;
     case NODE_NIL:
     default:

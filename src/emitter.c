@@ -108,9 +108,6 @@ emitter_gen_node(struct node *n)
         emitter_gen_multistmt(stmt, "pconc", stmt->body->ary.size);
         break;
     }
-    case NODE_NUM:
-        strbuf_append(buf, "%d", ((struct node_num *)n)->num);
-        break;
     case NODE_NIL:
     default:
         fprintf(stderr, "emitter_gen_node: type error\n");
