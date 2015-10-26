@@ -338,37 +338,6 @@ pseudo_expr: LNAME
                 }
 ;
 
-opt_arg_list:
-        {
-            $$ = NULL;
-        }
-            | arg_list_r
-;
-
-arg_list_r: arg
-            {
-                $$ = NULL;
-                if (NULL != $1) {
-                    $$ = node_list_new();
-                    node_list_add($$, $1);
-                }
-            }
-       | arg_list_r ',' arg
-            {
-                $$ = $1;
-                if (NULL != $3) {
-                    node_list_add($$, $3);
-                }
-            }
-;
-
-arg: pseudo_expr
-    | LNUMBER
-    {
-        $$ = node_get_int($1);
-    }
-;
-
 xdcl: common_dcl
     | xproc_dcl
         {
@@ -487,12 +456,41 @@ var: LVARIABLE
 ;
 
 
+arg_list_r: arg
+              {
+                $$ = node_list_new();
+                node_list_add($$, $1);
+              }
+          | arg_list_r ',' arg
+              {
+                $$ = $1;
+                node_list_add($$, $3);
+              }
+;
+
+arg: pseudo_expr
+    | LNUMBER
+    {
+        $$ = node_get_int($1);
+    }
+;
+
 /* optional */
 opt_xdcl_list:
                  {
                     $$ = NULL;
                  }
              | xdcl_list_r
+;
+
+opt_arg_list:
+                {
+                    $$ = node_list_new();
+                }
+            | arg_list_r
+                {
+                    $$ = $1;
+                }
 ;
 
 opt_stmt_list:
