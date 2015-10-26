@@ -65,8 +65,9 @@ yylex(void);
 %type <node> pick_stmt search_stmt interrupt_stmt
 %type <node> ndet_stmt conc_stmt pconc_stmt
 %type <node> or_list or_item
-%type <node> jing_expr expr
+%type <node> jing_expr expr dcl_expr
 %type <node> pseudo_expr formula_stmt
+%type <node> predicate
 %type <node> stmt common_dcl simple_stmt complex_stmt compound_stmt empty_stmt
 
 %type <sym> LNAME LVARIABLE
@@ -99,7 +100,7 @@ empty_stmt: term
                 }
 ;
 
-simple_stmt: pseudo_expr
+simple_stmt: predicate
            | formula_stmt
 ;
 
@@ -186,7 +187,7 @@ interrupt_stmt: LINTERRUPT '(' jing_expr ')' compound_stmt
                 {
                     $$ = node_interrupt_new($3, $5);
                 }
-              | LINTERRUPT '(' jing_expr ')' pseudo_expr
+              | LINTERRUPT '(' jing_expr ')' predicate
                 {
                     struct node *list = node_list_new();
                     node_list_add(list, $5);
@@ -269,14 +270,6 @@ jing_expr: '~' jing_expr
         yyerror("`()` not implemented");
     }
     | expr
-    | LTRUE
-    {
-        $$ = node_get_true();
-    }
-    | LFALSE
-    {
-        $$ = node_get_false();
-    }
 ;
 
 expr: expr LLT expr
@@ -296,13 +289,35 @@ expr: expr LLT expr
         $$ = node_expr_new($2, $1, $3);
     }
     | pseudo_expr
-    | LNUMBER
-    {
-        $$ = node_get_int($1);
-    }
 ;
 
-pseudo_expr: LNAME
+pseudo_expr: dcl_expr
+           | var
+           | LNAME
+            {
+                $$ = node_symref_new($1, node_list_new());
+            }
+           | LNUMBER
+            {
+                $$ = node_get_int($1);
+            }
+           | LTRUE
+            {
+                $$ = node_get_true();
+            }
+           | LFALSE
+            {
+                $$ = node_get_false();
+            }
+;
+
+dcl_expr: LNAME '(' opt_arg_list ')'
+        {
+            $$ = node_symref_new($1, $3);
+        }
+;
+
+predicate: LNAME
                 {
                     $$ = node_symref_new($1, node_list_new());
 
@@ -351,18 +366,9 @@ xdcl: common_dcl
 ;
 
 common_dcl: action_dcl
-            {
-                $$ = $1;
-            }
           | rel_fluent_dcl
-            {
-            }
           | fun_fluent_dcl
-            {
-            }
           | prolog_dcl
-            {
-            }
 ;
 
 action_dcl: LACTION LNAME ':' LNUMBER
@@ -455,7 +461,6 @@ var: LVARIABLE
     }
 ;
 
-
 arg_list_r: arg
               {
                 $$ = node_list_new();
@@ -469,10 +474,6 @@ arg_list_r: arg
 ;
 
 arg: pseudo_expr
-    | LNUMBER
-    {
-        $$ = node_get_int($1);
-    }
 ;
 
 /* optional */
