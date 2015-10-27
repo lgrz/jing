@@ -212,7 +212,12 @@ expr_chk_symref(struct node *n)
         return E0001;
     }
 
-    /* callable used in expression */
+    /*
+     * callable used in expression
+     *
+     * The argument count is not checked as just the existence of either of
+     * these types in this context is not allowed.
+     */
     if (TACTION == ref->sym->type || TPROC == ref->sym->type) {
         return E0011;
     }
