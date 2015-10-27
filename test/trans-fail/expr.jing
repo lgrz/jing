@@ -7,6 +7,8 @@
 
 action a: 0;
 
+rel fluent s: 0;
+
 procedure myproc() {}
 
 procedure test_single_int_fails() {
@@ -26,5 +28,10 @@ procedure test_action_fails() {
 
 procedure test_procedure_fails() {
     if (myproc()) { // ERROR invalid expression, found callable (`action` or `procedure`) `myproc`
+    }
+}
+
+procedure test_rel_fluent_fails() {
+    if (s > 1) { // ERROR invalid operands to binary operator `>` (rel fluent)
     }
 }

@@ -52,6 +52,7 @@ semcheck_errorl(YYLTYPE t, enum error_code err, struct node *n)
 {
     struct node_symref *ref = NULL;
     char *name = NULL;
+    char *op_str = NULL;
 
     assert(n);
 
@@ -63,6 +64,8 @@ semcheck_errorl(YYLTYPE t, enum error_code err, struct node *n)
         assert(ref->sym);
         assert(ref->sym->name);
         name = ref->sym->name;
+    } else if (NODE_EXPR == n->type) {
+        op_str = ((struct node_expr *)n)->operator;
     }
 
     switch (err) {
@@ -83,6 +86,10 @@ semcheck_errorl(YYLTYPE t, enum error_code err, struct node *n)
     case E0011:
         yyerrorl(t, "invalid expression, found callable "
                 "(`action` or `procedure`) `%s`", name);
+        break;
+    case E0012:
+        yyerrorl(t, "invalid operands to binary operator `%s` (rel fluent)",
+                op_str);
         break;
     default:
         yyerrorl(t, "unhandled error code %d", err);
@@ -161,6 +168,25 @@ semcheck_action_defined(struct symbol *sym)
 }
 
 /*
+ * Determine if a node is a `rel fluent`.
+ */
+static bool
+is_rel_fluent(struct node *n)
+{
+    struct node_symref *ref;
+
+    assert(n);
+    if (NODE_SYMREF == n->type) {
+        ref = (struct node_symref *)n;
+        assert(ref->sym);
+
+        return ref->sym->type == TFLUENTREL;
+    }
+
+    return false;
+}
+
+/*
  * Formula expression semantic checks.
  */
 enum error_code
@@ -182,6 +208,13 @@ semcheck_expr(struct node *n)
         /* callable used in expression */
         if (TACTION == ref->sym->type || TPROC == ref->sym->type) {
             return E0011;
+        }
+    }
+
+    if (NODE_EXPR == n->type) {
+        struct node_expr *op = (struct node_expr *)n;
+        if (is_rel_fluent(op->left) || is_rel_fluent(op->right)) {
+            return E0012;
         }
     }
 
