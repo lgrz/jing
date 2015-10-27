@@ -11,20 +11,20 @@ action c: 1;
 action d: 2;
 
 procedure test_undefined_pick_var() {
-    pick #X {
-        a(#X);
-        b(#Y); // ERROR unresolved variable `Y`
+    pick #x {
+        a(#x);
+        b(#y); // ERROR unresolved variable `y`
     }
 
-    pick #X, #Y {
-        pick #A {
-            a(#X);
-            b(#A);
-            c(#Z); // ERROR unresolved variable `Z`
+    pick #x, #y {
+        pick #a {
+            a(#x);
+            b(#a);
+            c(#z); // ERROR unresolved variable `z`
         }
     }
 
-    pick #S {
-        d(#S, #T); // ERROR unresolved variable `T`
+    pick #s {
+        d(#s, #t); // ERROR unresolved variable `t`
     }
 }
