@@ -17,17 +17,13 @@ action f: 0;
 
 procedure test_ndet() {
     ndet {
-       {
          a;
          b;
-       }
-       or {
+     } or {
          c;
          d;
-       }
-       or {
+     } or {
          e;
          f;
-       }
     }
 }

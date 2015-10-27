@@ -198,29 +198,29 @@ interrupt_stmt: LINTERRUPT '(' jing_expr ')' compound_stmt
                 }
 ;
 
-ndet_stmt: LNDET '{' compound_stmt or_list '}'
+ndet_stmt: LNDET compound_stmt or_list
             {
                 struct node *list = node_list_new();
-                node_list_add(list, $3);
-                node_list_append(list, $4);
+                node_list_add(list, $2);
+                node_list_append(list, $3);
                 $$ = node_block_new(NODE_NDET, list);
             }
 ;
 
-conc_stmt: LCONC '{' compound_stmt or_list '}'
+conc_stmt: LCONC compound_stmt or_list
             {
                 struct node *list = node_list_new();
-                node_list_add(list, $3);
-                node_list_append(list, $4);
+                node_list_add(list, $2);
+                node_list_append(list, $3);
                 $$ = node_block_new(NODE_CONC, list);
             }
 ;
 
-pconc_stmt: LPCONC '{' compound_stmt then_list '}'
+pconc_stmt: LPCONC compound_stmt then_list
             {
                 struct node *list = node_list_new();
-                node_list_add(list, $3);
-                node_list_append(list, $4);
+                node_list_add(list, $2);
+                node_list_append(list, $3);
                 $$ = node_block_new(NODE_PCONC, list);
             }
 ;

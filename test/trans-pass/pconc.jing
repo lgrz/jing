@@ -17,17 +17,13 @@ action f: 0;
 
 procedure test_pconc() {
     pconc {
-       {
          a;
          b;
-       }
-       then {
+   } then {
          c;
          d;
-       }
-       then {
+   } then {
          e;
          f;
-       }
     }
 }

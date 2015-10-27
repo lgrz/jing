@@ -17,17 +17,13 @@ action f: 0;
 
 procedure test_conc() {
     conc {
-       {
          a;
          b;
-       }
-       or {
+   } or {
          c;
          d;
-       }
-       or {
+   } or {
          e;
          f;
-       }
     }
 }
