@@ -7,9 +7,9 @@
 
 // EXPECTED OUTPUT
 // proc(test_op_simple, [if(2 > 3, [a], []), if(4 >= 6, [b], []), if(1 < 2, [c], []), if(1 <= 2, [d], [])]).
-// proc(test_rel_fluent, [if(s, [a], [])]).
-// proc(test_fun_fluent, [if(t > 1, [b], [])]).
-// proc(test_prolog, [if(p, [a], []), if(q(true), [b], []), if(q(1), [c], []), if(q(s), [d], [])]).
+// proc(test_rel_fluent, [if(s, [a], []), if(u(myatom), [b], []), if(u(N), [c], [])]).
+// proc(test_fun_fluent, [if(t > 1, [b], []), if(v(myatom) > 1, [b], []), if(v(N) > 1, [c], [])]).
+// proc(test_prolog, [if(p, [a], []), if(q(true), [b], []), if(q(1), [c], []), if(q(s), [d], []), if(q(N), [a], [])]).
 // proc(test_proc_arg, [if(N > 3, [a], []), if(Flag, [b], [])]).
 // proc(test_recur_strips_parens, [if(2 > 3, [a], []), if(s, [a], [])]).
 
@@ -21,6 +21,9 @@ action d: 0;
 rel fluent s: 0;
 fun fluent t: 0;
 
+rel fluent u: 1;
+fun fluent v: 1;
+
 prolog p: 0;
 prolog q: 1;
 
@@ -31,20 +34,25 @@ procedure test_op_simple() {
     if (1 <= 2) { d; }
 }
 
-procedure test_rel_fluent() {
+procedure test_rel_fluent(N) {
     if (s) { a; }
+    if (u(myatom)) { b; }
+    if (u(N)) { c; }
 }
 
-procedure test_fun_fluent() {
+procedure test_fun_fluent(N) {
     if (t > 1) { b; }
+    if (v(myatom) > 1) { b; }
+    if (v(N) > 1) { c; }
 }
 
-procedure test_prolog() {
+procedure test_prolog(N) {
     if (p) { a; }
 
     if (q(true)) { b; }
     if (q(1)) { c; }
     if (q(s)) { d; }
+    if (q(N)) { a; }
 }
 
 procedure test_proc_arg(N, Flag) {
