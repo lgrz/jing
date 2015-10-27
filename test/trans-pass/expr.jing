@@ -11,6 +11,7 @@
 // proc(test_fun_fluent, [if(t > 1, [b], [])]).
 // proc(test_prolog, [if(p, [a], []), if(q(true), [b], []), if(q(1), [c], []), if(q(s), [d], [])]).
 // proc(test_proc_arg, [if(N > 3, [a], []), if(Flag, [b], [])]).
+// proc(test_recur_strips_parens, [if(2 > 3, [a], []), if(s, [a], [])]).
 
 action a: 0;
 action b: 0;
@@ -49,4 +50,9 @@ procedure test_prolog() {
 procedure test_proc_arg(N, Flag) {
     if (N > 3) { a; }
     if (Flag) { b; }
+}
+
+procedure test_recur_strips_parens() {
+    if ((2 > 3)) { a; }
+    if (((s))) { a; }
 }

@@ -267,7 +267,7 @@ jing_expr: '~' jing_expr
     }
     | '(' jing_expr ')'
     {
-        yyerror("`()` not implemented");
+        $$ = $2;
     }
     | expr
     {

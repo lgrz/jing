@@ -11,6 +11,7 @@ rel fluent s: 0;
 fun fluent t: 0;
 
 procedure myproc() {}
+procedure myproc_arg(N) {}
 
 procedure test_unary_int() {
     if (3) { // ERROR invalid unary expression, found integer `3`
@@ -29,6 +30,9 @@ procedure test_action() {
 
 procedure test_procedure() {
     if (myproc()) { // ERROR invalid expression, found callable (`action` or `procedure`) `myproc`
+    }
+
+    if (myproc_arg(some_atom)) { // ERROR invalid expression, found callable (`action` or `procedure`) `myproc_arg`
     }
 }
 
@@ -54,5 +58,59 @@ procedure test_operand_action() {
 
 procedure test_operand_procedure() {
     if (myproc() > 1) { // ERROR invalid expression, found callable (`action` or `procedure`) `unknown (FIXME)`
+    }
+
+    if (myproc_arg(some_atom) > 1) { // ERROR invalid expression, found callable (`action` or `procedure`) `unknown (FIXME)`
+    }
+}
+
+procedure test_recur_unary_int() {
+    if ((3)) { // ERROR invalid unary expression, found integer `3`
+    }
+}
+
+procedure test_recur_undefined() {
+    if ((myatom)) { // ERROR unresolved name `myatom`
+    }
+}
+
+procedure test_recur_action() {
+    if ((a)) { // ERROR invalid expression, found callable (`action` or `procedure`) `a`
+    }
+}
+
+procedure test_recur_procedure() {
+    if ((myproc())) { // ERROR invalid expression, found callable (`action` or `procedure`) `myproc`
+    }
+
+    if ((myproc_arg(some_atom))) { // ERROR invalid expression, found callable (`action` or `procedure`) `myproc_arg`
+    }
+}
+
+procedure test_recur_rel_fluent() {
+    if ((s > 1)) { // ERROR invalid operands to binary operator `>` (rel fluent)
+    }
+}
+
+procedure test_recur_fun_fluent() {
+    if ((t)) { // ERROR invalid unary expression, found fun fluent `t`
+    }
+}
+
+procedure test_recur_operand_undefined() {
+    if ((myatom > t)) { // ERROR unresolved name `unknown (FIXME)`
+    }
+}
+
+procedure test_recur_operand_action() {
+    if ((a > 1)) { // ERROR invalid expression, found callable (`action` or `procedure`) `unknown (FIXME)`
+    }
+}
+
+procedure test_recur_operand_procedure() {
+    if ((myproc() > 1)) { // ERROR invalid expression, found callable (`action` or `procedure`) `unknown (FIXME)`
+    }
+
+    if ((myproc_arg(some_atom) > 1)) { // ERROR invalid expression, found callable (`action` or `procedure`) `unknown (FIXME)`
     }
 }
