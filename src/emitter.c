@@ -91,23 +91,23 @@ emitter_gen_node(struct node *n)
         emitter_gen_comstmt((struct node_comstmt *)n);
         break;
     case NODE_NDET:
-    {
-        struct node_comstmt *stmt = (struct node_comstmt *)n;
-        emitter_gen_multistmt(stmt, "ndet", stmt->body->ary.size);
-        break;
-    }
+        {
+            struct node_comstmt *stmt = (struct node_comstmt *)n;
+            emitter_gen_multistmt(stmt, "ndet", stmt->body->ary.size);
+            break;
+        }
     case NODE_CONC:
-    {
-        struct node_comstmt *stmt = (struct node_comstmt *)n;
-        emitter_gen_multistmt(stmt, "conc", stmt->body->ary.size);
-        break;
-    }
+        {
+            struct node_comstmt *stmt = (struct node_comstmt *)n;
+            emitter_gen_multistmt(stmt, "conc", stmt->body->ary.size);
+            break;
+        }
     case NODE_PCONC:
-    {
-        struct node_comstmt *stmt = (struct node_comstmt *)n;
-        emitter_gen_multistmt(stmt, "pconc", stmt->body->ary.size);
-        break;
-    }
+        {
+            struct node_comstmt *stmt = (struct node_comstmt *)n;
+            emitter_gen_multistmt(stmt, "pconc", stmt->body->ary.size);
+            break;
+        }
     case NODE_NIL:
     default:
         fprintf(stderr, "emitter_gen_node: type error\n");

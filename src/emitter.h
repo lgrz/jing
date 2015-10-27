@@ -43,6 +43,10 @@ void
 emitter_gen_symref(struct node_symref *ref);
 
 void
+emitter_gen_multistmt(struct node_comstmt *stmt, const char *string,
+        size_t stmts_left);
+
+void
 emitter_gen_comstmt(struct node_comstmt *stmt);
 
 void
@@ -56,10 +60,6 @@ emitter_gen_cond_block(struct node_cond_block *cond_block);
 
 void
 emitter_gen_op(struct node_expr *op);
-
-void
-emitter_gen_multistmt(struct node_comstmt *stmt, const char *string,
-        size_t stmts_left);
 
 const char *
 emitter_get_str(void);
