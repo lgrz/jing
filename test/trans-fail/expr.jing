@@ -8,11 +8,12 @@
 action a: 0;
 
 rel fluent s: 0;
+fun fluent t: 0;
 
 procedure myproc() {}
 
 procedure test_single_int_fails() {
-    if (1) { // ERROR integer as unary expression
+    if (3) { // ERROR invalid unary expression, found integer `3`
     }
 }
 
@@ -33,5 +34,10 @@ procedure test_procedure_fails() {
 
 procedure test_rel_fluent_fails() {
     if (s > 1) { // ERROR invalid operands to binary operator `>` (rel fluent)
+    }
+}
+
+procedure test_fun_fluent_fails() {
+    if (t) { // ERROR invalid unary expression, found fun fluent `t`
     }
 }

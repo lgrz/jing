@@ -33,7 +33,8 @@ enum error_code {
     E0003, /* argument count mismatch */
     E0010, /* integer as unary expression */
     E0011, /* predicate (callable) used in expression */
-    E0012 /* rel fluent to binary operand */
+    E0012, /* rel fluent to binary operand */
+    E0013 /* fun fluent as unary expression */
 };
 
 bool

@@ -81,7 +81,8 @@ semcheck_errorl(YYLTYPE t, enum error_code err, struct node *n)
                 semcheck_get_args(ref->sym), ref->args->ary.size);
         break;
     case E0010:
-        yyerrorl(t, "integer as unary expression");
+        yyerrorl(t, "invalid unary expression, found integer `%ld`",
+                n->val.u.int_val);
         break;
     case E0011:
         yyerrorl(t, "invalid expression, found callable "
@@ -90,6 +91,9 @@ semcheck_errorl(YYLTYPE t, enum error_code err, struct node *n)
     case E0012:
         yyerrorl(t, "invalid operands to binary operator `%s` (rel fluent)",
                 op_str);
+        break;
+    case E0013:
+        yyerrorl(t, "invalid unary expression, found fun fluent `%s`", name);
         break;
     default:
         yyerrorl(t, "unhandled error code %d", err);
@@ -208,6 +212,11 @@ semcheck_expr(struct node *n)
         /* callable used in expression */
         if (TACTION == ref->sym->type || TPROC == ref->sym->type) {
             return E0011;
+        }
+
+        /* unary fun fluent */
+        if (TFLUENTFUN == ref->sym->type) {
+            return E0013;
         }
     }
 
