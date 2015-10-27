@@ -121,17 +121,17 @@ node_comdcl_new(enum type stype, struct symbol *sym, uint8_t arity)
 }
 
 /*
- * A common statement: 'search', 'iter', 'citer'
+ * Create a block node. A block node has a header and a list of statements.
  */
 struct node *
-node_comstmt_new(enum node_type type, struct node *body)
+node_block_new(enum node_type type, struct node *body)
 {
-    struct node_comstmt *stmt = bmalloc(sizeof(*stmt));
+    struct node_block *blk = bmalloc(sizeof(*blk));
 
-    stmt->type = type;
-    stmt->body = (struct node_list *)body;
+    blk->type = type;
+    blk->body = (struct node_list *)body;
 
-    return (struct node *)stmt;
+    return (struct node *)blk;
 }
 
 /*
@@ -331,9 +331,9 @@ node_free(void *del)
     case NODE_CONC:
     case NODE_PCONC:
         {
-            struct node_comstmt *stmt = (struct node_comstmt *)n;
-            if (stmt->body) {
-                node_free(stmt->body);
+            struct node_block *blk = (struct node_block *)n;
+            if (blk->body) {
+                node_free(blk->body);
             }
         }
         break;

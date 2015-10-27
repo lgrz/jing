@@ -92,7 +92,7 @@ struct node_comdcl {
     struct symbol *sym;
 };
 
-struct node_comstmt {
+struct node_block {
     uint8_t type;
     struct node_list *body;
 };
@@ -146,7 +146,7 @@ struct node *
 node_comdcl_new(enum type stype, struct symbol *sym, uint8_t arity);
 
 struct node *
-node_comstmt_new(enum node_type type, struct node *body);
+node_block_new(enum node_type type, struct node *body);
 
 struct node *
 node_if_new(struct node *cond, struct node *then, struct node *elseif_list,

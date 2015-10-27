@@ -73,36 +73,30 @@ emitter_gen_node(struct node *n)
         emitter_gen_op((struct node_op *)n);
         break;
     case NODE_ITER:
-        strbuf_append(buf, "star(");
-        emitter_gen_comstmt((struct node_comstmt *)n);
-        strbuf_append(buf, ")");
+        emitter_gen_block((struct node_block *)n, "star");
         break;
     case NODE_CITER:
-        strbuf_append(buf, "iconc(");
-        emitter_gen_comstmt((struct node_comstmt *)n);
-        strbuf_append(buf, ")");
+        emitter_gen_block((struct node_block *)n, "iconc");
         break;
     case NODE_SEARCH:
-        strbuf_append(buf, "search(");
-        emitter_gen_comstmt((struct node_comstmt *)n);
-        strbuf_append(buf, ")");
+        emitter_gen_block((struct node_block *)n, "search");
         break;
     case NODE_NDET:
         {
-            struct node_comstmt *stmt = (struct node_comstmt *)n;
-            emitter_gen_multistmt(stmt, "ndet", stmt->body->ary.size);
+            struct node_block *blk = (struct node_block *)n;
+            emitter_gen_block_list(blk, "ndet", blk->body->ary.size);
             break;
         }
     case NODE_CONC:
         {
-            struct node_comstmt *stmt = (struct node_comstmt *)n;
-            emitter_gen_multistmt(stmt, "conc", stmt->body->ary.size);
+            struct node_block *blk = (struct node_block *)n;
+            emitter_gen_block_list(blk, "conc", blk->body->ary.size);
             break;
         }
     case NODE_PCONC:
         {
-            struct node_comstmt *stmt = (struct node_comstmt *)n;
-            emitter_gen_multistmt(stmt, "pconc", stmt->body->ary.size);
+            struct node_block *blk = (struct node_block *)n;
+            emitter_gen_block_list(blk, "pconc", blk->body->ary.size);
             break;
         }
     case NODE_FORMULA:
@@ -199,38 +193,40 @@ emitter_gen_symref(struct node_symref *ref)
 }
 
 /*
- * Generate `ndet`, `conc`, or `pconc` statements
+ * Generate a list of body statements.
  */
 void
-emitter_gen_multistmt(struct node_comstmt *stmt, const char *string,
+emitter_gen_block_list(struct node_block *blk, const char *hdr,
         size_t stmts_left)
 {
-    size_t size = stmt->body->ary.size;
+    size_t size = blk->body->ary.size;
 
-    strbuf_append(buf, "%s(", string);
-    emitter_gen_node((struct node *)stmt->body->ary.data[size - stmts_left]);
+    strbuf_append(buf, "%s(", hdr);
+    emitter_gen_node((struct node *)blk->body->ary.data[size - stmts_left]);
     strbuf_append(buf, ", ");
     if (stmts_left > 2) {
-        emitter_gen_multistmt(stmt, string, stmts_left - 1);
+        emitter_gen_block_list(blk, hdr, stmts_left - 1);
     } else {
-        emitter_gen_node((struct node *)stmt->body->ary.data[size-1]);
+        emitter_gen_node((struct node *)blk->body->ary.data[size-1]);
     }
     strbuf_append(buf, ")");
 }
 
 /*
- * Generate `star`, `iconc`, or `search` statements
+ * Generate a body of statements.
  */
 void
-emitter_gen_comstmt(struct node_comstmt *stmt)
+emitter_gen_block(struct node_block *blk, const char *hdr)
 {
-    assert(stmt);
+    assert(blk);
 
-    if (stmt->body) {
-        emitter_gen_node((struct node *)stmt->body);
+    strbuf_append(buf, "%s(", hdr);
+    if (blk->body) {
+        emitter_gen_node((struct node *)blk->body);
     } else {
         strbuf_append(buf, "[]");
     }
+    strbuf_append(buf, ")");
 }
 
 /*

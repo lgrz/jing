@@ -43,11 +43,11 @@ void
 emitter_gen_symref(struct node_symref *ref);
 
 void
-emitter_gen_multistmt(struct node_comstmt *stmt, const char *string,
+emitter_gen_block_list(struct node_block *stmt, const char *hdr,
         size_t stmts_left);
 
 void
-emitter_gen_comstmt(struct node_comstmt *stmt);
+emitter_gen_block(struct node_block *blk, const char *hdr);
 
 void
 emitter_gen_if(struct node_if *nif);

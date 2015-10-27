@@ -164,13 +164,13 @@ while_stmt: LWHILE '(' jing_expr ')' compound_stmt
 
 iter_stmt: LITER compound_stmt
             {
-                $$ = node_comstmt_new(NODE_ITER, $2);
+                $$ = node_block_new(NODE_ITER, $2);
             }
 ;
 
 citer_stmt: LCITER compound_stmt
             {
-                $$ = node_comstmt_new(NODE_CITER, $2);
+                $$ = node_block_new(NODE_CITER, $2);
             }
 ;
 
@@ -181,7 +181,7 @@ pick_stmt: LPICK '<' var_list_r '>' compound_stmt
 
 search_stmt: LSEARCH compound_stmt
             {
-                $$ = node_comstmt_new(NODE_SEARCH, $2);
+                $$ = node_block_new(NODE_SEARCH, $2);
             }
 ;
 
@@ -202,7 +202,7 @@ ndet_stmt: LNDET '{' compound_stmt or_list '}'
                 struct node *list = node_list_new();
                 node_list_add(list, $3);
                 node_list_append(list, $4);
-                $$ = node_comstmt_new(NODE_NDET, list);
+                $$ = node_block_new(NODE_NDET, list);
             }
 ;
 
@@ -211,7 +211,7 @@ conc_stmt: LCONC '{' compound_stmt or_list '}'
                 struct node *list = node_list_new();
                 node_list_add(list, $3);
                 node_list_append(list, $4);
-                $$ = node_comstmt_new(NODE_CONC, list);
+                $$ = node_block_new(NODE_CONC, list);
             }
 ;
 
@@ -220,7 +220,7 @@ pconc_stmt: LPCONC '{' compound_stmt or_list '}'
                 struct node *list = node_list_new();
                 node_list_add(list, $3);
                 node_list_append(list, $4);
-                $$ = node_comstmt_new(NODE_PCONC, list);
+                $$ = node_block_new(NODE_PCONC, list);
             }
 ;
 
