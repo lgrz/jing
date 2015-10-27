@@ -200,8 +200,7 @@ interrupt_stmt: LINTERRUPT '(' jing_expr ')' compound_stmt
 ndet_stmt: LNDET '{' compound_stmt or_list '}'
             {
                 struct node *list = node_list_new();
-                $$ = node_comstmt_new(NODE_OR, $3);
-                node_list_add(list, $$);
+                node_list_add(list, $3);
                 node_list_append(list, $4);
                 $$ = node_comstmt_new(NODE_NDET, list);
             }
@@ -210,8 +209,7 @@ ndet_stmt: LNDET '{' compound_stmt or_list '}'
 conc_stmt: LCONC '{' compound_stmt or_list '}'
             {
                 struct node *list = node_list_new();
-                $$ = node_comstmt_new(NODE_OR, $3);
-                node_list_add(list, $$);
+                node_list_add(list, $3);
                 node_list_append(list, $4);
                 $$ = node_comstmt_new(NODE_CONC, list);
             }
@@ -220,8 +218,7 @@ conc_stmt: LCONC '{' compound_stmt or_list '}'
 pconc_stmt: LPCONC '{' compound_stmt or_list '}'
             {
                 struct node *list = node_list_new();
-                $$ = node_comstmt_new(NODE_OR, $3);
-                node_list_add(list, $$);
+                node_list_add(list, $3);
                 node_list_append(list, $4);
                 $$ = node_comstmt_new(NODE_PCONC, list);
             }
@@ -246,7 +243,7 @@ or_list: or_item
 
 or_item: LOR compound_stmt
             {
-                $$ = node_comstmt_new(NODE_OR, $2);
+                $$ = $2;
             }
 ;
 

@@ -87,9 +87,6 @@ emitter_gen_node(struct node *n)
         emitter_gen_comstmt((struct node_comstmt *)n);
         strbuf_append(buf, ")");
         break;
-    case NODE_OR:
-        emitter_gen_comstmt((struct node_comstmt *)n);
-        break;
     case NODE_NDET:
         {
             struct node_comstmt *stmt = (struct node_comstmt *)n;

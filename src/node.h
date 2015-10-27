@@ -60,7 +60,6 @@ enum node_type {
     NODE_NDET,
     NODE_CONC,
     NODE_PCONC,
-    NODE_OR,
     NODE_FORMULA
 };
 

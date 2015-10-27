@@ -327,7 +327,6 @@ node_free(void *del)
     case NODE_ITER:
     case NODE_CITER:
     case NODE_SEARCH:
-    case NODE_OR:
     case NODE_NDET:
     case NODE_CONC:
     case NODE_PCONC:
