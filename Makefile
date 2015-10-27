@@ -1,9 +1,23 @@
+#
+# This file is a part of Jing.
+#
+# Copyright (c) 2015 The Jing Authors.
+#
+# For the full copyright and license information, please view the LICENSE file
+# that was distributed with this source code.
+#
+
 TARGET = jing2indigo
+
+VERSION_NUM = 0.1.0
+VERSION_EXTRA = -dev ($(shell git rev-parse --short=8 HEAD))
+VERSION = $(VERSION_NUM)$(VERSION_EXTRA)
 
 LEX = flex
 YACC = bison -d
 CC = gcc
-CFLAGS += -std=c99 -Wall -Wextra -pedantic -O2 -D_XOPEN_SOURCE=700 -Isrc
+CFLAGS += -std=c99 -Wall -Wextra -pedantic -O2 -D_XOPEN_SOURCE=700 \
+		  -DJING_VERSION='"$(VERSION)"' -Isrc
 LDFLAGS +=
 DEBUG_CFLAGS = -g -O0 -DYYDEBUG=1 -DDEBUG
 
@@ -21,10 +35,15 @@ CHECK_FULL = $(CHECK_QUICK) check-tvalgrind
 .PHONY: all
 all: $(TARGET)
 
+.PHONY: debug
 debug: YACC := $(YACC) -v
 debug: CFLAGS := $(CFLAGS:-O%=)
 debug: CC := $(CC) $(DEBUG_CFLAGS)
 debug: all
+
+.PHONY: release
+release: VERSION_EXTRA :=
+release: all
 
 $(TARGET): $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $^ src/lex.yy.c $(LDFLAGS)

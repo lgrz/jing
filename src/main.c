@@ -145,10 +145,14 @@ parse_opt(int argc, char **argv)
         usage();
     }
 
-    while ((ch = getopt(argc, argv, "o:")) != -1) {
+    while ((ch = getopt(argc, argv, "o:v")) != -1) {
         switch (ch) {
         case 'o':
             strncpy(outfile, optarg, 255);
+            break;
+        case 'v':
+            printf("jing2indigo %s\n", JING_VERSION);
+            exit(EXIT_SUCCESS);
             break;
         case '?':
         default:
