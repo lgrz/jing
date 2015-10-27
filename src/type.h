@@ -11,11 +11,19 @@
 #define TYPE_H
 
 enum type {
+    /* undefined */
     TNONE,
+    /* action */
     TACTION,
+    /* procedure */
     TPROC,
+    /* dummy type for procedure arguments */
+    TPROCVAR,
+    /* relational fluent */
     TFLUENTREL,
+    /* functional fluent */
     TFLUENTFUN,
+    /* prolog predicate (callable) */
     TPROLOG
 };
 

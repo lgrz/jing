@@ -9,3 +9,8 @@ procedure test_single_int_fails() {
     if (1) { // ERROR integer as unary expression
     }
 }
+
+procedure test_undefined_atom_fails() {
+    if (myatom) { // ERROR unresolved name `myatom`
+    }
+}

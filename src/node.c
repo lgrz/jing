@@ -24,6 +24,15 @@ node_proc_new(struct symbol *sym, struct node *args)
     symtab_set_type(sym, TPROC);
     symtab_set_def(sym, (struct node *)proc);
 
+    /* set arguments type */
+    assert(proc->args);
+    for (size_t i = 0; i < proc->args->ary.size; ++i) {
+        assert(proc->args->ary.data[i]);
+        struct node_symref *ref =
+            (struct node_symref *)proc->args->ary.data[i];
+        symtab_set_type(ref->sym, TPROCVAR);
+    }
+
     return (struct node *)proc;
 }
 

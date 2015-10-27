@@ -162,8 +162,18 @@ semcheck_action_defined(struct symbol *sym)
 enum error_code
 semcheck_expr(struct node *n)
 {
+    /* unary integer */
     if (NODE_VAL == n->type && VAL_INT == n->val.vtype) {
         return E0010;
+    }
+
+    /* undefined atom in an expression */
+    if (NODE_SYMREF == n->type) {
+        struct node_symref *ref = (struct node_symref *)n;
+        assert(ref->sym);
+        if (TNONE == ref->sym->type) {
+            return E0001;
+        }
     }
 
     return ENONE;
