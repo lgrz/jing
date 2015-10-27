@@ -66,6 +66,7 @@ semcheck_errorl(YYLTYPE t, enum error_code err, struct node *n)
         name = ref->sym->name;
     } else if (NODE_EXPR == n->type) {
         op_str = ((struct node_expr *)n)->operator;
+        name = "unknown (FIXME)";
     }
 
     switch (err) {
@@ -191,39 +192,72 @@ is_rel_fluent(struct node *n)
 }
 
 /*
+ * Semantic checks for `symref` that is common to both unary and binary
+ * expressions.
+ */
+static enum error_code
+expr_chk_symref(struct node *n)
+{
+    struct node_symref *ref = (struct node_symref *)n;
+
+    assert(ref);
+    assert(ref->sym);
+
+    if (NODE_SYMREF != ref->type) {
+        return ENONE;
+    }
+
+    /* undefined in an expression */
+    if (TNONE == ref->sym->type) {
+        return E0001;
+    }
+
+    /* callable used in expression */
+    if (TACTION == ref->sym->type || TPROC == ref->sym->type) {
+        return E0011;
+    }
+
+    return ENONE;
+}
+
+/*
  * Formula expression semantic checks.
  */
 enum error_code
 semcheck_expr(struct node *n)
 {
-    /* unary integer */
+    enum error_code ret = ENONE;
+
     if (NODE_VAL == n->type && VAL_INT == n->val.vtype) {
+        /* unary integer */
         return E0010;
-    }
-
-    if (NODE_SYMREF == n->type) {
+    } else if (NODE_SYMREF == n->type) {
+        /* unary symref */
         struct node_symref *ref = (struct node_symref *)n;
-        assert(ref->sym);
-        /* undefined atom in an expression */
-        if (TNONE == ref->sym->type) {
-            return E0001;
-        }
 
-        /* callable used in expression */
-        if (TACTION == ref->sym->type || TPROC == ref->sym->type) {
-            return E0011;
+        ret = expr_chk_symref(n);
+        if (semcheck_is_error(ret)) {
+            return ret;
         }
 
         /* unary fun fluent */
         if (TFLUENTFUN == ref->sym->type) {
             return E0013;
         }
-    }
-
-    if (NODE_EXPR == n->type) {
+    } else if (NODE_EXPR == n->type) {
         struct node_expr *op = (struct node_expr *)n;
         if (is_rel_fluent(op->left) || is_rel_fluent(op->right)) {
             return E0012;
+        }
+
+        ret = expr_chk_symref(op->left);
+        if (semcheck_is_error(ret)) {
+            return ret;
+        }
+
+        ret = expr_chk_symref(op->right);
+        if (semcheck_is_error(ret)) {
+            return ret;
         }
     }
 

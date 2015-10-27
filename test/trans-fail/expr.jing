@@ -12,32 +12,47 @@ fun fluent t: 0;
 
 procedure myproc() {}
 
-procedure test_single_int_fails() {
+procedure test_unary_int() {
     if (3) { // ERROR invalid unary expression, found integer `3`
     }
 }
 
-procedure test_undefined_atom_fails() {
+procedure test_undefined() {
     if (myatom) { // ERROR unresolved name `myatom`
     }
 }
 
-procedure test_action_fails() {
+procedure test_action() {
     if (a) { // ERROR invalid expression, found callable (`action` or `procedure`) `a`
     }
 }
 
-procedure test_procedure_fails() {
+procedure test_procedure() {
     if (myproc()) { // ERROR invalid expression, found callable (`action` or `procedure`) `myproc`
     }
 }
 
-procedure test_rel_fluent_fails() {
+procedure test_rel_fluent() {
     if (s > 1) { // ERROR invalid operands to binary operator `>` (rel fluent)
     }
 }
 
-procedure test_fun_fluent_fails() {
+procedure test_fun_fluent() {
     if (t) { // ERROR invalid unary expression, found fun fluent `t`
+    }
+}
+
+procedure test_operand_undefined() {
+    if (myatom > t) { // ERROR unresolved name `unknown (FIXME)`
+    }
+}
+
+procedure test_operand_action() {
+    if (a > 1) { // ERROR invalid expression, found callable (`action` or `procedure`) `unknown (FIXME)`
+    }
+}
+
+procedure test_operand_procedure() {
+    if (myproc() > 1) { // ERROR invalid expression, found callable (`action` or `procedure`) `unknown (FIXME)`
     }
 }
