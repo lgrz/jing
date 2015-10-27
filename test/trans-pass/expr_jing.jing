@@ -7,21 +7,21 @@
 
 // EXPECTED OUTPUT
 // proc(test_not_simple, [?(neg(true))]).
-// proc(test_not_rel_fluent, [?(neg(s)), ?(neg(t(myatom))), ?(neg(t(N)))]).
-// proc(test_not_fun_fluent, [?(neg(u > 1)), ?(neg((u > 1))), ?(v(myatom) > 1), ?(v(N) > 1)]).
-// proc(test_not_prolog, [?(neg(w)), ?(neg(x(true))), ?(neg(x(1))), ?(neg(x(s))), ?(neg(x(N)))]).
-// proc(test_not_proc_arg, [?(neg(N > 3)), ?(neg(Flag))]).
+// proc(test_not_rel_fluent(N), [?(neg(s)), ?(neg(t(myatom))), ?(neg(t(N)))]).
+// proc(test_not_fun_fluent(N), [?(neg(u > 1)), ?(neg((u > 1))), ?(v(myatom) > 1), ?(v(N) > 1)]).
+// proc(test_not_prolog(N), [?(neg(w)), ?(neg(x(true))), ?(neg(x(1))), ?(neg(x(s))), ?(neg(x(N)))]).
+// proc(test_not_proc_arg(N, Flag), [?(neg(N > 3)), ?(neg(Flag))]).
 // proc(test_and_simple, [?(and(true, true))]).
-// proc(test_and_rel_fluent, [?(and(s, s)), ?(and(t(myatom), s)), ?(and(t(N), s)), ?(and(t(myatom), t(N)))]).
-// proc(test_and_fun_fluent, [?(and(true, u > 1)), ?(and(true, (u > 1))), ?(and(true, v(myatom) > 1)), ?(and(true, v(N) > 1))]).
-// proc(test_and_prolog, [?(and(w, w)), ?(and(true, x(true))), ?(and(true, x(1))), ?(and(true, x(s))), ?(and(true, x(N)))]).
-// proc(test_and_proc_arg, [?(and(true, N > 3)), ?(and(true, Flag))]).
+// proc(test_and_rel_fluent(N), [?(and(s, s)), ?(and(t(myatom), s)), ?(and(t(N), s)), ?(and(t(myatom), t(N)))]).
+// proc(test_and_fun_fluent(N), [?(and(true, u > 1)), ?(and(true, (u > 1))), ?(and(true, v(myatom) > 1)), ?(and(true, v(N) > 1))]).
+// proc(test_and_prolog(N), [?(and(w, w)), ?(and(true, x(true))), ?(and(true, x(1))), ?(and(true, x(s))), ?(and(true, x(N)))]).
+// proc(test_and_proc_arg(N, Flag), [?(and(true, N > 3)), ?(and(true, Flag))]).
 // proc(test_or_simple, [?(or(true, true))]).
-// proc(test_or_rel_fluent, [?(or(s, s)), ?(or(t(myatom), s)), ?(or(t(N), s)), ?(or(t(myatom), t(N)))]).
-// proc(test_or_fun_fluent, [?(or(true, u > 1)), ?(or(true, (u > 1))), ?(or(true, v(myatom) > 1)), ?(or(true, v(N) > 1))]).
-// proc(test_or_prolog, [?(or(w, w)), ?(or(true, x(true))), ?(or(true, x(1))), ?(or(true, x(s))), ?(or(true, x(N)))]).
-// proc(test_or_proc_arg, [?(or(true, N > 3)), ?(or(true, Flag))]).
-// proc(test_combined, [?(or(and(neg(true), N > 3), true)), ?(and((or(true, v(myatom) > 1)), neg(x(1))))]).
+// proc(test_or_rel_fluent(N), [?(or(s, s)), ?(or(t(myatom), s)), ?(or(t(N), s)), ?(or(t(myatom), t(N)))]).
+// proc(test_or_fun_fluent(N), [?(or(true, u > 1)), ?(or(true, (u > 1))), ?(or(true, v(myatom) > 1)), ?(or(true, v(N) > 1))]).
+// proc(test_or_prolog(N), [?(or(w, w)), ?(or(true, x(true))), ?(or(true, x(1))), ?(or(true, x(s))), ?(or(true, x(N)))]).
+// proc(test_or_proc_arg(N, Flag), [?(or(true, N > 3)), ?(or(true, Flag))]).
+// proc(test_combined(N), [?(or(and(neg(true), N > 3), true)), ?(and((or(true, v(myatom) > 1)), neg(x(1))))]).
 
 rel fluent s: 0;
 rel fluent t: 1;

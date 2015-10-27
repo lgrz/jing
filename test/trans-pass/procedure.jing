@@ -8,6 +8,7 @@
 // EXPECTED OUTPUT
 // proc(go_up, [up, down, halt]).
 // proc(test_proc_call, [go_up]).
+// proc(test_proc_args(A, B, C), []).
 
 action up: 0;
 action down: 0;
@@ -22,3 +23,5 @@ procedure go_up() {
 procedure test_proc_call() {
     go_up();
 }
+
+procedure test_proc_args(A, B, C) {}

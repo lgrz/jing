@@ -125,8 +125,14 @@ void
 emitter_gen_proc(struct node_proc *proc)
 {
     assert(proc->sym);
+    assert(proc->args);
 
-    strbuf_append(buf, "proc(%s, ", proc->sym->name);
+    strbuf_append(buf, "proc(%s", proc->sym->name);
+    if (proc->args->ary.size) {
+        emitter_gen_list_parens(proc->args);
+    }
+    strbuf_append(buf, ", ");
+
     if (proc->body) {
         emitter_gen_node((struct node *)proc->body);
     } else {
