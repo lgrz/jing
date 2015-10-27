@@ -5,6 +5,10 @@
 // For the full copyright and license information, please view the LICENSE file
 // that was distributed with this source code.
 
+action a: 0;
+
+procedure myproc() {}
+
 procedure test_single_int_fails() {
     if (1) { // ERROR integer as unary expression
     }
@@ -12,5 +16,15 @@ procedure test_single_int_fails() {
 
 procedure test_undefined_atom_fails() {
     if (myatom) { // ERROR unresolved name `myatom`
+    }
+}
+
+procedure test_action_fails() {
+    if (a) { // ERROR invalid expression, found callable (`action` or `procedure`) `a`
+    }
+}
+
+procedure test_procedure_fails() {
+    if (myproc()) { // ERROR invalid expression, found callable (`action` or `procedure`) `myproc`
     }
 }

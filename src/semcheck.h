@@ -31,7 +31,8 @@ enum error_code {
     E0001, /* unresolved name */
     E0002, /* unresolved action */
     E0003, /* argument count mismatch */
-    E0010 /* integer as unary expression */
+    E0010, /* integer as unary expression */
+    E0011 /* predicate (callable) used in expression */
 };
 
 bool

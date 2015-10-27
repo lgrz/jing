@@ -80,6 +80,10 @@ semcheck_errorl(YYLTYPE t, enum error_code err, struct node *n)
     case E0010:
         yyerrorl(t, "integer as unary expression");
         break;
+    case E0011:
+        yyerrorl(t, "invalid expression, found callable "
+                "(`action` or `procedure`) `%s`", name);
+        break;
     default:
         yyerrorl(t, "unhandled error code %d", err);
     }
@@ -167,12 +171,17 @@ semcheck_expr(struct node *n)
         return E0010;
     }
 
-    /* undefined atom in an expression */
     if (NODE_SYMREF == n->type) {
         struct node_symref *ref = (struct node_symref *)n;
         assert(ref->sym);
+        /* undefined atom in an expression */
         if (TNONE == ref->sym->type) {
             return E0001;
+        }
+
+        /* callable used in expression */
+        if (TACTION == ref->sym->type || TPROC == ref->sym->type) {
+            return E0011;
         }
     }
 
