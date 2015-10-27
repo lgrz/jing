@@ -1,0 +1,16 @@
+// This file is a part of Jing.
+//
+// Copyright (c) 2015 The Jing Authors.
+//
+// For the full copyright and license information, please view the LICENSE file
+// that was distributed with this source code.
+
+// EXPECTED OUTPUT
+// proc(test_simple_formula, [?(true), ?(true), ?(1 > 2)]).
+
+// Basic testing, the expression cases are handled in expr.jing
+procedure test_simple_formula() {
+    ?(true);
+    ?(false);
+    ?(1 > 2);
+}

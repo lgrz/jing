@@ -250,6 +250,7 @@ or_item: LOR compound_stmt
 
 formula_stmt: '?' '(' jing_expr ')'
               {
+                $$ = node_formula_new($3);
               }
 ;
 

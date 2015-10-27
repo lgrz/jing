@@ -108,6 +108,9 @@ emitter_gen_node(struct node *n)
             emitter_gen_multistmt(stmt, "pconc", stmt->body->ary.size);
             break;
         }
+    case NODE_FORMULA:
+        emitter_gen_formula((struct node_formula *)n);
+        break;
     case NODE_NIL:
     default:
         fprintf(stderr, "emitter_gen_node: type error\n");
@@ -317,6 +320,20 @@ emitter_gen_op(struct node_expr *op)
     emitter_gen_node(op->left);
     strbuf_append(buf, " %s ", op->operator);
     emitter_gen_node(op->right);
+}
+
+/*
+ * Generate formula `?(...)`.
+ */
+void
+emitter_gen_formula(struct node_formula *formula)
+{
+    assert(formula);
+    assert(formula->cond);
+
+    strbuf_append(buf, "?(");
+    emitter_gen_node(formula->cond);
+    strbuf_append(buf, ")");
 }
 
 /*

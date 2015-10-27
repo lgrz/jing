@@ -204,6 +204,19 @@ node_expr_new(char *operator, struct node *left, struct node *right)
 }
 
 /*
+ * Create formula node.
+ */
+struct node *
+node_formula_new(struct node *cond)
+{
+    struct node_formula *f = bmalloc(sizeof(*f));
+    f->type = NODE_FORMULA;
+    f->cond = cond;
+
+    return (struct node *)f;
+}
+
+/*
  * Create new integer.
  */
 struct node *
@@ -346,6 +359,12 @@ node_free(void *del)
             free(op->operator);
             node_free(op->left);
             node_free(op->right);
+        }
+        break;
+    case NODE_FORMULA:
+        {
+            struct node_formula *f = (struct node_formula *)n;
+            node_free(f->cond);
         }
         break;
     case NODE_NIL:

@@ -51,7 +51,8 @@ enum node_type {
     NODE_NDET,
     NODE_CONC,
     NODE_PCONC,
-    NODE_OR
+    NODE_OR,
+    NODE_FORMULA
 };
 
 struct node {
@@ -109,6 +110,11 @@ struct node_expr {
     struct node *right;
 };
 
+struct node_formula {
+    uint8_t type;
+    struct node *cond;
+};
+
 struct node *
 node_proc_new(struct symbol *sym, struct node *n);
 
@@ -151,6 +157,9 @@ node_int_new(long n);
 
 struct node *
 node_expr_new(char *operator, struct node *left, struct node *right);
+
+struct node *
+node_formula_new(struct node *cond);
 
 struct node *
 node_get_true(void);
