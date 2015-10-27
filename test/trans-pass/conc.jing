@@ -6,7 +6,7 @@
 // that was distributed with this source code.
 
 // EXPECTED OUTPUT
-// proc(test_ndet, [ndet([a, b], ndet([c, d], [e, f]))]).
+// proc(test_conc, [conc([a, b], conc([c, d], [e, f]))]).
 
 action a: 0;
 action b: 0;
@@ -15,8 +15,8 @@ action d: 0;
 action e: 0;
 action f: 0;
 
-procedure test_ndet() {
-    ndet {
+procedure test_conc() {
+    conc {
        {
          a;
          b;

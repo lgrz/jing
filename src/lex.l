@@ -48,6 +48,7 @@ int yycolumn = 1;
 "if"        { return LIF; }
 "else"      { return LELSE; }
 "or"        { return LOR; }
+"then"      { return LTHEN; }
 "pick"      { return LPICK; }
 "iter"      { return LITER; }
 "ndet"      { return LNDET; }

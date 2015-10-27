@@ -29,6 +29,7 @@ yylex(void);
        LIF
        LELSE
        LOR
+       LTHEN
        LWHILE
        LPROCEDURE
        LITER
@@ -65,7 +66,7 @@ yylex(void);
 %type <node> while_stmt iter_stmt citer_stmt
 %type <node> pick_stmt search_stmt interrupt_stmt
 %type <node> ndet_stmt conc_stmt pconc_stmt
-%type <node> or_list or_item
+%type <node> or_list or_item then_list then_item
 %type <node> jing_expr expr dcl_expr
 %type <node> pseudo_expr formula_stmt
 %type <node> predicate
@@ -215,7 +216,7 @@ conc_stmt: LCONC '{' compound_stmt or_list '}'
             }
 ;
 
-pconc_stmt: LPCONC '{' compound_stmt or_list '}'
+pconc_stmt: LPCONC '{' compound_stmt then_list '}'
             {
                 struct node *list = node_list_new();
                 node_list_add(list, $3);
@@ -242,6 +243,29 @@ or_list: or_item
 ;
 
 or_item: LOR compound_stmt
+            {
+                $$ = $2;
+            }
+;
+
+then_list: then_item
+            {
+                $$ = NULL;
+                if (NULL != $1) {
+                    $$ = node_list_new();
+                    node_list_add($$, $1);
+                }
+            }
+           | then_list then_item
+            {
+                $$ = $1;
+                if (NULL != $2) {
+                    node_list_add($$, $2);
+                }
+            }
+;
+
+then_item: LTHEN compound_stmt
             {
                 $$ = $2;
             }
