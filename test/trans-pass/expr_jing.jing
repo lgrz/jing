@@ -1,0 +1,140 @@
+// This file is a part of Jing.
+//
+// Copyright (c) 2015 The Jing Authors.
+//
+// For the full copyright and license information, please view the LICENSE file
+// that was distributed with this source code.
+
+// EXPECTED OUTPUT
+// proc(test_not_simple, [?(neg(true))]).
+// proc(test_not_rel_fluent, [?(neg(s)), ?(neg(t(myatom))), ?(neg(t(N)))]).
+// proc(test_not_fun_fluent, [?(neg(u > 1)), ?(neg((u > 1))), ?(v(myatom) > 1), ?(v(N) > 1)]).
+// proc(test_not_prolog, [?(neg(w)), ?(neg(x(true))), ?(neg(x(1))), ?(neg(x(s))), ?(neg(x(N)))]).
+// proc(test_not_proc_arg, [?(neg(N > 3)), ?(neg(Flag))]).
+// proc(test_and_simple, [?(and(true, true))]).
+// proc(test_and_rel_fluent, [?(and(s, s)), ?(and(t(myatom), s)), ?(and(t(N), s)), ?(and(t(myatom), t(N)))]).
+// proc(test_and_fun_fluent, [?(and(true, u > 1)), ?(and(true, (u > 1))), ?(and(true, v(myatom) > 1)), ?(and(true, v(N) > 1))]).
+// proc(test_and_prolog, [?(and(w, w)), ?(and(true, x(true))), ?(and(true, x(1))), ?(and(true, x(s))), ?(and(true, x(N)))]).
+// proc(test_and_proc_arg, [?(and(true, N > 3)), ?(and(true, Flag))]).
+// proc(test_or_simple, [?(or(true, true))]).
+// proc(test_or_rel_fluent, [?(or(s, s)), ?(or(t(myatom), s)), ?(or(t(N), s)), ?(or(t(myatom), t(N)))]).
+// proc(test_or_fun_fluent, [?(or(true, u > 1)), ?(or(true, (u > 1))), ?(or(true, v(myatom) > 1)), ?(or(true, v(N) > 1))]).
+// proc(test_or_prolog, [?(or(w, w)), ?(or(true, x(true))), ?(or(true, x(1))), ?(or(true, x(s))), ?(or(true, x(N)))]).
+// proc(test_or_proc_arg, [?(or(true, N > 3)), ?(or(true, Flag))]).
+// proc(test_combined, [?(or(and(neg(true), N > 3), true)), ?(and((or(true, v(myatom) > 1)), neg(x(1))))]).
+
+rel fluent s: 0;
+rel fluent t: 1;
+
+fun fluent u: 0;
+fun fluent v: 1;
+
+prolog w: 0;
+prolog x: 1;
+
+// ~ tests
+procedure test_not_simple() {
+    ?(~true);
+}
+
+procedure test_not_rel_fluent(N) {
+    ?(~s);
+    ?(~t(myatom));
+    ?(~t(N));
+}
+
+procedure test_not_fun_fluent(N) {
+    ?(~u > 1);
+    ?(~(u > 1));
+
+    ?(v(myatom) > 1);
+
+    ?(v(N) > 1);
+}
+
+procedure test_not_prolog(N) {
+    ?(~w);
+    ?(~x(true));
+    ?(~x(1));
+    ?(~x(s));
+    ?(~x(N));
+}
+
+procedure test_not_proc_arg(N, Flag) {
+    ?(~N > 3);
+    ?(~Flag);
+}
+
+// && tests
+procedure test_and_simple() {
+    ?(true && false);
+}
+
+procedure test_and_rel_fluent(N) {
+    ?(s && s);
+    ?(t(myatom) && s);
+    ?(t(N) && s);
+    ?(t(myatom) && t(N));
+}
+
+procedure test_and_fun_fluent(N) {
+    ?(true && u > 1);
+    ?(true && (u > 1));
+
+    ?(true && v(myatom) > 1);
+
+    ?(true && v(N) > 1);
+}
+
+procedure test_and_prolog(N) {
+    ?(w && w);
+    ?(true && x(true));
+    ?(true && x(1));
+    ?(true && x(s));
+    ?(true && x(N));
+}
+
+procedure test_and_proc_arg(N, Flag) {
+    ?(true && N > 3);
+    ?(true && Flag);
+}
+
+// || tests
+procedure test_or_simple() {
+    ?(true || false);
+}
+
+procedure test_or_rel_fluent(N) {
+    ?(s || s);
+    ?(t(myatom) || s);
+    ?(t(N) || s);
+    ?(t(myatom) || t(N));
+}
+
+procedure test_or_fun_fluent(N) {
+    ?(true || u > 1);
+    ?(true || (u > 1));
+
+    ?(true || v(myatom) > 1);
+
+    ?(true || v(N) > 1);
+}
+
+procedure test_or_prolog(N) {
+    ?(w || w);
+    ?(true || x(true));
+    ?(true || x(1));
+    ?(true || x(s));
+    ?(true || x(N));
+}
+
+procedure test_or_proc_arg(N, Flag) {
+    ?(true || N > 3);
+    ?(true || Flag);
+}
+
+// combined test
+procedure test_combined(N) {
+    ?(~true && N > 3 || false);
+    ?((true || v(myatom) > 1) && ~x(1));
+}

@@ -41,6 +41,7 @@ yylex(void);
        LNDET
        LCONC
        LPCONC
+       LNOT
        LOROR
        LANDAND
        LREL
@@ -73,11 +74,12 @@ yylex(void);
 %type <sym> LNAME LVARIABLE
 %type <num> LNUMBER
 %type <str> LLT LLTE LGT LGTE
+%type <str> LNOT LANDAND LOROR
 
 %left LOROR
 %left LANDAND
 %left LLT LLTE LGT LGTE
-%right '~'
+%right LNOT
 
 %%
 
@@ -254,21 +256,21 @@ formula_stmt: '?' '(' jing_expr ')'
               }
 ;
 
-jing_expr: '~' jing_expr
+jing_expr: LNOT jing_expr
     {
-        yyerror("`~` not implemented");
+        $$ = node_op_new(ONOT, $1, $2, NULL);
     }
     | jing_expr LOROR jing_expr
     {
-        yyerror("`||` not implemented");
+        $$ = node_op_new(OOROR, $2, $1, $3);
     }
     | jing_expr LANDAND jing_expr
     {
-        yyerror("`&&` not implemented");
+        $$ = node_op_new(OANDAND, $2, $1, $3);
     }
     | '(' jing_expr ')'
     {
-        $$ = $2;
+        $$ = node_op_new(ONONE, NULL, $2, NULL);
     }
     | expr
     {
@@ -284,19 +286,19 @@ jing_expr: '~' jing_expr
 
 expr: expr LLT expr
     {
-        $$ = node_expr_new($2, $1, $3);
+        $$ = node_op_new(OPROLOG, $2, $1, $3);
     }
     | expr LGT expr
     {
-        $$ = node_expr_new($2, $1, $3);
+        $$ = node_op_new(OPROLOG, $2, $1, $3);
     }
     | expr LLTE expr
     {
-        $$ = node_expr_new($2, $1, $3);
+        $$ = node_op_new(OPROLOG, $2, $1, $3);
     }
     | expr LGTE expr
     {
-        $$ = node_expr_new($2, $1, $3);
+        $$ = node_op_new(OPROLOG, $2, $1, $3);
     }
     | pseudo_expr
 ;

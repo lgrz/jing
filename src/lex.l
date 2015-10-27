@@ -28,7 +28,6 @@ int yycolumn = 1;
 %%
 
 ":" |
-"~" |
 "." |
 "?" |
 "," |
@@ -42,8 +41,9 @@ int yycolumn = 1;
 ">"         { yylval.str = strdup(yytext); return LGT; }
 "<="        { yylval.str = strdup(yytext); return LLTE; }
 ">="        { yylval.str = strdup(yytext); return LGTE; }
-"||"        { return LOROR; }
-"&&"        { return LANDAND; }
+"~"         { yylval.str = strdup(yytext); return LNOT; }
+"||"        { yylval.str = strdup(yytext); return LOROR; }
+"&&"        { yylval.str = strdup(yytext); return LANDAND; }
 
 "if"        { return LIF; }
 "else"      { return LELSE; }

@@ -59,7 +59,7 @@ void
 emitter_gen_cond_block(struct node_cond_block *cond_block);
 
 void
-emitter_gen_op(struct node_expr *op);
+emitter_gen_op(struct node_op *op);
 
 void
 emitter_gen_formula(struct node_formula *formula);

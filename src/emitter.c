@@ -69,8 +69,8 @@ emitter_gen_node(struct node *n)
     case NODE_WHILE:
         emitter_gen_cond_block((struct node_cond_block *)n);
         break;
-    case NODE_EXPR:
-        emitter_gen_op((struct node_expr *)n);
+    case NODE_OP:
+        emitter_gen_op((struct node_op *)n);
         break;
     case NODE_ITER:
         strbuf_append(buf, "star(");
@@ -310,16 +310,47 @@ emitter_gen_cond_block(struct node_cond_block *cond_block)
 }
 
 /*
- * Generate a op (inside an expression).
+ * Generate an op.
  */
 void
-emitter_gen_op(struct node_expr *op)
+emitter_gen_op(struct node_op *op)
 {
     assert(op);
 
-    emitter_gen_node(op->left);
-    strbuf_append(buf, " %s ", op->operator);
-    emitter_gen_node(op->right);
+    switch (op->otype) {
+    case ONOT:
+        strbuf_append(buf, "neg");
+        break;
+    case OANDAND:
+        strbuf_append(buf, "and");
+        break;
+    case OOROR:
+        strbuf_append(buf, "or");
+        break;
+    case ONONE:
+        strbuf_append(buf, "(");
+        emitter_gen_node(op->left);
+        strbuf_append(buf, ")");
+        return;
+    default:
+        break;
+    }
+
+    if (op->otype < OPROLOGBEGIN) {
+        /* output IndiGolog logic expression */
+        strbuf_append(buf, "(");
+        emitter_gen_node(op->left);
+        if (op->otype != ONOT) {
+            strbuf_append(buf, ", ");
+            emitter_gen_node(op->right);
+        }
+        strbuf_append(buf, ")");
+    } else {
+        /* output Prolog expression */
+        emitter_gen_node(op->left);
+        strbuf_append(buf, " %s ", op->op_str);
+        emitter_gen_node(op->right);
+    }
 }
 
 /*

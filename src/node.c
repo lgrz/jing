@@ -192,13 +192,15 @@ node_cond_block_new(struct node *cond, struct node *body)
  * Create an `op` node.
  */
 struct node *
-node_expr_new(char *operator, struct node *left, struct node *right)
+node_op_new(enum op_type op_type, char *op_str, struct node *left,
+        struct node *right)
 {
-    struct node_expr *op = bmalloc(sizeof(*op));
-    op->type = NODE_EXPR;
-    op->operator = operator;
+    struct node_op *op = bmalloc(sizeof(*op));
+    op->type = NODE_OP;
+    op->op_str = op_str;
     op->left = left;
     op->right = right;
+    op->otype = op_type;
 
     return (struct node *)op;
 }
@@ -353,10 +355,10 @@ node_free(void *del)
             node_free(cond_block->body);
         }
         break;
-    case NODE_EXPR:
+    case NODE_OP:
         {
-            struct node_expr *op = (struct node_expr *)n;
-            free(op->operator);
+            struct node_op *op = (struct node_op *)n;
+            free(op->op_str);
             node_free(op->left);
             node_free(op->right);
         }

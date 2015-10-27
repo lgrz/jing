@@ -64,8 +64,8 @@ semcheck_errorl(YYLTYPE t, enum error_code err, struct node *n)
         assert(ref->sym);
         assert(ref->sym->name);
         name = ref->sym->name;
-    } else if (NODE_EXPR == n->type) {
-        op_str = ((struct node_expr *)n)->operator;
+    } else if (NODE_OP == n->type) {
+        op_str = ((struct node_op *)n)->op_str;
         name = "unknown (FIXME)";
     }
 
@@ -249,8 +249,8 @@ semcheck_expr(struct node *n)
         if (TFLUENTFUN == ref->sym->type) {
             return E0013;
         }
-    } else if (NODE_EXPR == n->type) {
-        struct node_expr *op = (struct node_expr *)n;
+    } else if (NODE_OP == n->type) {
+        struct node_op *op = (struct node_op *)n;
         if (is_rel_fluent(op->left) || is_rel_fluent(op->right)) {
             return E0012;
         }

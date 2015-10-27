@@ -21,6 +21,15 @@
 /* Forward declare symtab */
 struct symbol;
 
+enum op_type {
+    ONONE,
+    ONOT,
+    OANDAND,
+    OOROR,
+    OPROLOGBEGIN, /* marker for end of IndiGolog operators */
+    OPROLOG /* catch all for Prolog operators */
+};
+
 enum val_type {
     VAL_BOOL,
     VAL_INT
@@ -45,7 +54,7 @@ enum node_type {
     NODE_VAL,
     NODE_INTERRUPT,
     NODE_WHILE,
-    NODE_EXPR,
+    NODE_OP,
     NODE_ITER,
     NODE_CITER,
     NODE_NDET,
@@ -103,9 +112,10 @@ struct node_cond_block {
     struct node_list *body;
 };
 
-struct node_expr {
+struct node_op {
     uint8_t type;
-    char *operator;
+    enum op_type otype;
+    char *op_str;
     struct node *left;
     struct node *right;
 };
@@ -156,7 +166,8 @@ struct node *
 node_int_new(long n);
 
 struct node *
-node_expr_new(char *operator, struct node *left, struct node *right);
+node_op_new(enum op_type op_type, char *op_str, struct node *left,
+        struct node *right);
 
 struct node *
 node_formula_new(struct node *cond);
