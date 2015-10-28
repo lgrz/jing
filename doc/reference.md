@@ -252,3 +252,32 @@ opt_arg_list = { arg_list_r } ;
 
 term = ';' ;
 ```
+
+
+### Future work
+
+Possible ideas for future work and improvements.
+
+**Support for additional Prolog operators.** For example: `=`, `is`, etc. There
+are many more that could be added.
+
+**Shorthand control flow statements.** Allow for the omission of `{}` for a
+single statement following a control flow statement such as `if`, `while`, etc.
+
+**Translate multiple files at the same time.** Enable jing2indigo to translate
+multiple files in succession instead of having to run each file as a seperate
+command.
+
+**Declare multiple action/fluent/prolog on one line.** Add syntactic sugar to
+allow declarations of the following form:
+
+    action a: 0, b: 1, c: 0;
+
+as an alternative to the existing syntax:
+
+    action a: 0;
+    action b: 1;
+    action c: 0;
+
+**Pretty print.** Add an option to output the generated Prolog code in a more
+readable format.

@@ -256,6 +256,7 @@ import it via the `prolog` declaration described earlier.
 
 
 ### Concurrency
+
 Jing has its own keywords for IndiGolog's concurrency constructs. These include:
 
 * `iconc`, concurrency with equal priority
@@ -279,22 +280,19 @@ rel fluent pos: 1;
 procedure find_gold(N) {
     iconc {
         left;
-    }
-    or {
+    } or {
         right;
     }
-    
+
     pconc {
         up;
         forward(pos);
-    }
-    then {
+    } then {
         search_floor(N);
-    }
-    then {
+    } then {
         down;
     }
-    
+
     citer {
         grab_gold;
         deposit_gold;
@@ -318,7 +316,7 @@ program, here we highlight some of the key semantic checks that are performed.
 * Attempting to use undeclared `pick` variables will result in an error.
 * The number of arguments passed to an `action` or `procedure` must match with
   the definition.
-* A variable inside any statement's arguments must be either an argument to 
+* A variable inside any statement's arguments must be either an argument to
   `procedure` or `pick`.
 
 [structured_prog]: https://en.wikipedia.org/wiki/Structured_programming#Control_structures
@@ -327,23 +325,3 @@ program, here we highlight some of the key semantic checks that are performed.
 ### Examples
 
 More examples of Jing programs can be found in the 'examples' directory.
-
-### Future work
-A number of constructs present in IndiGolog are currently missing in Jing. These include:
-
-* Unification (`=`). The equals sign is not supported in Jing.
-* The `is` keyword, used in expressions
-
-As noted in the Usage section, the program will only take one file to be translated
-as input. One may modify this to take multiple files as arguments.
-
-When variables are read by lex, they are added to the symbol table, which is
-used for storing names, such as actions and procedures. This is unnecessary
-because they are stored in a stack, another data structure used internally for
-semantic checking. The grammar and program design would require many changes in 
-order to remove variables from the symbol table.
-
-Currently, only one declaration is allowed per line. This can lead to long files if a 
-large number of declarations are required in a program. In order to save space, The 
-programmer should be able to write something like the following:
-` action up, down, left, right: 0; `
