@@ -143,10 +143,15 @@ parse_opt(int argc, char **argv)
 
     if (argc < 2) {
         usage();
+        exit(EXIT_FAILURE);
     }
 
-    while ((ch = getopt(argc, argv, "o:v")) != -1) {
+    while ((ch = getopt(argc, argv, "ho:v")) != -1) {
         switch (ch) {
+        case 'h':
+            usage();
+            exit(EXIT_SUCCESS);
+            break;
         case 'o':
             strncpy(outfile, optarg, 255);
             break;
@@ -157,6 +162,7 @@ parse_opt(int argc, char **argv)
         case '?':
         default:
             usage();
+            exit(EXIT_FAILURE);
         }
     }
 
@@ -164,6 +170,7 @@ parse_opt(int argc, char **argv)
     /* check infile is specified */
     if (argc < 1) {
         usage();
+        exit(EXIT_FAILURE);
     }
     infile = argv[optind];
 
@@ -176,6 +183,9 @@ parse_opt(int argc, char **argv)
 static void
 usage(void)
 {
-    fprintf(stderr, "usage: jing2indigo [-o output] file.jing\n");
-    exit(EXIT_FAILURE);
+    fprintf(stderr, "Usage: jing2indigo [OPTIONS] file.jing\n");
+    printf("\nOptions:\n"
+            "  -h           Display this message\n"
+            "  -o <file>    Write output to file\n"
+            "  -v           Display version and exit\n\n");
 }
