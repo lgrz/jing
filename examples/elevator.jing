@@ -1,0 +1,58 @@
+// This file is a part of Jing.
+//
+// Copyright (c) 2015 The Jing Authors.
+//
+// For the full copyright and license information, please view the LICENSE file
+// that was distributed with this source code.
+
+// Based on the IndiGolog elevator example from:
+// https://bitbucket.org/ssardina/indigolog/src/e73d2576637142938cf9ff38893e5684b4dd02bf/Examples/Elevator-Vanilla/example1.pl
+
+// `some` is part of IndiGolog see: src/Interpreters/indigolog-vanilla.pl
+prolog some: 2;
+
+// The `prolog` predicate `op_unify` is used to get around the limitations of
+// the Jing language as it does not yet have support for the unification
+// operator.
+prolog op_unify: 2;
+
+prolog below_floor: 1;
+prolog above_floor: 1;
+prolog next_floor_to_serve: 1;
+
+action down: 0;
+action up: 0;
+action off: 1;
+action open: 0;
+action close: 0;
+
+fun fluent floor: 0;
+fun fluent light: 1;
+
+procedure go_floor(N) {
+    while (~op_unify(floor, N)) {
+        if (below_floor(N)) {
+            up;
+        } else {
+            down;
+        }
+    }
+}
+
+procedure serve_a_floor() {
+    pick #n {
+        ?(next_floor_to_serve(#n));
+        go_floor(#n);
+        open;
+        close;
+        off(#n);
+    }
+}
+
+procedure control() {
+    while (some(n, op_unify(light(n), on))) {
+        serve_a_floor();
+    }
+    go_floor(1);
+    open;
+}

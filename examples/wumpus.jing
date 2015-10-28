@@ -1,0 +1,71 @@
+// This file is a part of Jing.
+//
+// Copyright (c) 2015 The Jing Authors.
+//
+// For the full copyright and license information, please view the LICENSE file
+// that was distributed with this source code.
+
+// Example model of the wumpus world based from the IndiGolog examples:
+// https://bitbucket.org/ssardina/indigolog
+
+prolog op_unify: 2;
+prolog aligned: 3;
+
+action turn_left: 0;
+action turn_right: 0;
+action shoot_forward: 0;
+action pick_gold: 0;
+action smell: 0;
+action sense_breeze: 0;
+action sense_gold: 0;
+action explore: 0;
+action goto: 2;
+action climb: 0;
+
+fun fluent dir_agent: 0;
+fun fluent loc_agent: 0;
+fun fluent loc_wumpus: 0;
+rel fluent is_gold: 1;
+rel fluent alive_wumpus: 0;
+rel fluent in_dungeon: 0;
+rel fluent holding_gold: 0;
+
+procedure shoot(D) {
+    search {
+        ndet {
+            turn_left;
+        } or {
+            turn_right;
+        }
+        ?(op_unify(dir_agent, D));
+        shoot_forward;
+    }
+}
+
+procedure control() {
+    pconc {
+        pick #d, #l {
+            interrupt (op_unify(loc_wumpus, #l) &&
+                op_unify(alive_wumpus, true) &&
+                aligned(loc_agent, #d, loc_wumpus)) {
+                shoot(#d);
+            }
+        }
+    } then {
+        interrupt (op_unify(is_gold(loc_agent), true)) pick_gold;
+    } then {
+        interrupt (op_unify(in_dungeon, true)) {
+            smell;
+            sense_breeze;
+            sense_gold;
+            ndet {
+                ?(~holding_gold);
+                explore;
+            } or {
+                ?(holding_gold);
+                goto(1, 1);
+                climb;
+            }
+        }
+    }
+}
