@@ -142,12 +142,12 @@ action right: 0;
 action suck: 1;
 action power_down: 0;
 
-rel fluent location: 0;
-rel fluent room: 1;
+fun fluent location: 0;
+fun fluent room: 1;
+rel fluent is_dirty: 1;
+rel fluent in_location: 1;
 
 prolog some: 2;
-prolog is_dirty: 1;
-prolog in_location: 1;
 
 procedure go_room(N) {
     while (~in_location(N)) {
@@ -169,7 +169,7 @@ procedure clean_a_room() {
 
 procedure control() {
     while (some(n, is_dirty(n))) {
-        clean_a_room;
+        clean_a_room();
     }
     power_down;
 }
