@@ -9,8 +9,15 @@
 
 TARGET = jing2indigo
 
+GIT = $(shell which git)
+GITDIR = $(shell stat .git > /dev/null; echo $$?)
 VERSION_NUM = 0.1.0
-VERSION_EXTRA = -dev ($(shell git rev-parse --short=8 HEAD))
+VERSION_EXTRA = -dev
+ifneq ($(GIT),)
+ifeq ($(GITDIR), 0)
+	VERSION_EXTRA += ($(shell $(GIT) rev-parse --short=8 HEAD))
+endif
+endif
 VERSION = $(VERSION_NUM)$(VERSION_EXTRA)
 
 LEX = flex
