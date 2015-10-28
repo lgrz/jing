@@ -32,7 +32,6 @@ int yycolumn = 1;
 "?" |
 "," |
 ";" |
-"#" |
 "{" |
 "}" |
 "(" |
@@ -68,8 +67,9 @@ int yycolumn = 1;
 "interrupt" { return LINTERRUPT; }
 "procedure" { return LPROCEDURE; }
 
-[a-z][a-zA-Z0-9_]* { yylval.sym = symtab_lookup(yytext); return LNAME; }
-[A-Z][a-zA-Z0-9_]* { yylval.sym = symtab_lookup(yytext); return LVARIABLE; }
+[a-z][a-zA-Z0-9_]*  { yylval.sym = symtab_lookup(yytext); return LNAME; }
+[A-Z][a-zA-Z0-9_]*  { yylval.sym = symtab_lookup(yytext); return LVARIABLE; }
+#[a-z][a-zA-Z0-9_]* { yylval.sym = symtab_lookup(yytext); return LPICKNAME; }
 
 [0-9]+  { yylval.num = atoi(yytext); return LNUMBER; }
 

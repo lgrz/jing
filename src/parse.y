@@ -55,6 +55,7 @@ yylex(void);
 %token LNUMBER
        LNAME
        LVARIABLE
+       LPICKNAME
 
 %type <node> opt_xdcl_list xdcl_list_r xdcl
 %type <node> opt_stmt_list stmt_list_r
@@ -73,7 +74,7 @@ yylex(void);
 %type <node> predicate
 %type <node> stmt common_dcl simple_stmt complex_stmt compound_stmt empty_stmt
 
-%type <sym> LNAME LVARIABLE
+%type <sym> LNAME LVARIABLE LPICKNAME
 %type <num> LNUMBER
 %type <str> LLT LLTE LGT LGTE
 %type <str> LNOT LANDAND LOROR
@@ -349,10 +350,10 @@ pseudo_expr: dcl_expr
             {
                 $$ = node_get_false();
             }
-           | '#' LNAME
+           | LPICKNAME
            {
                 enum error_code err_code = ENONE;
-                $$ = node_symref_new($2, node_list_new());
+                $$ = node_symref_new($1, node_list_new());
 
                 err_code = semcheck_pick_args((struct node_symref *)$$);
                 if (semcheck_is_error(err_code)) {
@@ -538,10 +539,10 @@ pick_arg_list_r: pick_arg
           }
 ;
 
-pick_arg: '#' LNAME
+pick_arg: LPICKNAME
         {
             /* Dummy list for args, not used. */
-            $$ = node_symref_new($2, node_list_new());
+            $$ = node_symref_new($1, node_list_new());
         }
 ;
 

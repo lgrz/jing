@@ -189,11 +189,20 @@ emitter_gen_list_parens(struct node_list *list)
 void
 emitter_gen_symref(struct node_symref *ref)
 {
+    char *name = NULL;
+
     assert(ref);
     assert(ref->sym);
 
+    name = ref->sym->name;
+
+    if (TPICKVAR == ref->sym->type) {
+        strbuf_append(buf, "p_");
+        ++name; /* jump past the `#` symbol */
+    }
+
     /* handle `action` and `procedure` with 0 arguments. */
-    strbuf_append(buf, "%s", ref->sym->name);
+    strbuf_append(buf, "%s", name);
     if (ref->args && ref->args->ary.size) {
         emitter_gen_list_parens(ref->args);
     }

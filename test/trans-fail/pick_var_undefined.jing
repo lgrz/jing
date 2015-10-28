@@ -13,18 +13,18 @@ action d: 2;
 procedure test_undefined_pick_var() {
     pick #x {
         a(#x);
-        b(#y); // ERROR unresolved variable `y`
+        b(#y); // ERROR unresolved variable `#y`
     }
 
     pick #x, #y {
         pick #a {
             a(#x);
             b(#a);
-            c(#z); // ERROR unresolved variable `z`
+            c(#z); // ERROR unresolved variable `#z`
         }
     }
 
     pick #s {
-        d(#s, #t); // ERROR unresolved variable `t`
+        d(#s, #t); // ERROR unresolved variable `#t`
     }
 }

@@ -6,7 +6,7 @@
 // that was distributed with this source code.
 
 // EXPECTED OUTPUT
-// proc(test_pick, [pi(x, pi(y, [pi(a, pi(b, [a(x), b(a), c]))])), pi(a, [c, pi(b, [d(b), e])])]).
+// proc(test_pick, [pi(p_x, pi(p_y, [pi(p_a, pi(p_b, [a(p_x), b(p_a), c]))])), pi(p_a, [c, pi(p_b, [d(p_b), e])])]).
 
 action a: 1;
 action b: 1;

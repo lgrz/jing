@@ -146,6 +146,15 @@ node_pick_new(struct node *vars, struct node *body)
     pick->vars = (struct node_list *)vars;
     pick->body = (struct node_list *)body;
 
+    /* set arguments type */
+    assert(pick->vars);
+    for (size_t i = 0; i < pick->vars->ary.size; ++i) {
+        assert(pick->vars->ary.data[i]);
+        struct node_symref *ref =
+            (struct node_symref *)pick->vars->ary.data[i];
+        symtab_set_type(ref->sym, TPICKVAR);
+    }
+
     return (struct node *)pick;
 }
 

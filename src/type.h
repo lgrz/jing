@@ -24,7 +24,9 @@ enum type {
     /* functional fluent */
     TFLUENTFUN,
     /* prolog predicate (callable) */
-    TPROLOG
+    TPROLOG,
+    /* pick variable */
+    TPICKVAR
 };
 
 #endif /* TYPE_H */
