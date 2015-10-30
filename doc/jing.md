@@ -259,7 +259,7 @@ import it via the `prolog` declaration described earlier.
 
 Jing has its own keywords for IndiGolog's concurrency constructs. These include:
 
-* `iconc`, concurrency with equal priority
+* `conc`, concurrency with equal priority
 * `pconc`, concurrency with priority
 * `citer`, concurrent iteration
 
@@ -275,10 +275,10 @@ action search_floor: 1;
 action grab_gold: 0;
 action deposit_gold: 0;
 
-rel fluent pos: 1;
+rel fluent pos: 0;
 
 procedure find_gold(N) {
-    iconc {
+    conc {
         left;
     } or {
         right;
@@ -297,6 +297,7 @@ procedure find_gold(N) {
         grab_gold;
         deposit_gold;
     }
+}
 ```
 
 
