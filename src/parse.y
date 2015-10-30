@@ -148,6 +148,7 @@ elseif_list:
                 $$ = $1;
                 node_list_add($$, $2);
             }
+;
 
 else:
     {
@@ -241,7 +242,7 @@ or_list: or_item
                     node_list_add($$, $1);
                 }
             }
-           | or_list or_item
+       | or_list or_item
             {
                 $$ = $1;
                 if (NULL != $2) {
@@ -528,15 +529,15 @@ arg: pseudo_expr
 ;
 
 pick_arg_list_r: pick_arg
-          {
-            $$ = node_list_new();
-            node_list_add($$, $1);
-          }
-          | pick_arg_list_r ',' pick_arg
-          {
-            $$ = $1;
-            node_list_add($$, $3);
-          }
+               {
+                    $$ = node_list_new();
+                    node_list_add($$, $1);
+               }
+               | pick_arg_list_r ',' pick_arg
+               {
+                    $$ = $1;
+                    node_list_add($$, $3);
+               }
 ;
 
 pick_arg: LPICKNAME
@@ -572,13 +573,13 @@ opt_stmt_list:
 ;
 
 opt_var_list:
-        {
-            $$ = node_list_new();
-        }
-        | var_list_r
-        {
-            $$ = $1;
-        }
+            {
+                $$ = node_list_new();
+            }
+            | var_list_r
+            {
+                $$ = $1;
+            }
 ;
 
 term: ';'
