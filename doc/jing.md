@@ -1,6 +1,7 @@
 Jing
 ====
 
+
 Introduction
 ------------
 
@@ -93,12 +94,12 @@ This program continues to execute the action `forward` until it has reached its
 languages and the name 'control' is more of a convention rather than a
 requirement.
 
-Each iteration of the loop checks the functional fluent to see if the goal is
-reached. A functional fluent can be either true or false. The `~` operator is
+Each iteration of the loop checks the relational fluent to see if the goal is
+reached. A relational fluent can be either true or false. The `~` operator is
 the logical not operator that performs negation just like in any other
 programming language. Within the loop we make a call to an `action` named
 forward, which is declared at the top of the file along with the functional
-fluent `goal`. Both the action and the functional fluent are declared as taking
+fluent `goal`. Both the action and the relational fluent are declared as taking
 0 arguments. In Jing everything must be declared before it can be used.
 
 Here is the corresponding IndiGolog program:
@@ -188,13 +189,12 @@ agent can perform the actions `left`, `right`, `suck` and `power_down`. For the
 action `suck` we've specified that it takes 1 argument, the room in which the
 suck action is performed.
 
-A relational fluent can be considered a variable that changes depending on the
+A functional fluent can be considered a variable that changes depending on the
 current state of the world, for example as the vacuum agent moves between rooms
 the `location` fluent will change to reflect the agent's current location.
-Relational fluents can be seen as taking on a range of values (i.e. they are
-continuous).
+Functional fluents can be seen as taking on a range of values.
 
-Functional fluents are similar to relational fluents, however they can only be
+Relational fluents are similar to functional fluents, however they can only be
 either true or false.
 
 The `prolog` declaration provides a way to 'import' Prolog predicates that can
@@ -210,7 +210,7 @@ IndiGolog code that is required when running IndiGolog programs, however this
 is beyond the scope of this guide).
 
 In the `clean_a_room` procedure there are some things we haven't touched on
-yet. The `pick` construct is used to nondeterministrically bind a variable to
+yet. The `pick` construct is used to nondeterministically bind a variable to
 the statements contained within the `{}` and, if successful execute those
 statements. The variable to be bound by the `pick` statement is declared with a
 `#` symbol. This example shows a variable `n` is declared and if the room `n`
