@@ -1,5 +1,5 @@
-The Jing Language Reference
-===========================
+# Developer Guide
+
 
 ## Testing
 
@@ -52,7 +52,6 @@ All of the tests can be run via various make targets which are explained below.
 
 The available test targets are:
 
-
 1. Run the unit tests:
 
         make check-jing
@@ -79,9 +78,41 @@ The available test targets are:
         make check-full
 
 
-## Identifiers
+## The Jing Language Reference
+
+The notation used in this document is specified with Extended Backus-Naur Form
+(EBNF).
+
+
+### Identifiers
+
+Identifiers name program entites such as procedures and types. They must start
+with a lowercase letter, otherwise they would clash with Prolog variables.
+
+    upper = "A"..."Z" ;
+    lower = "a"..."z" ;
+    digit = "0"..."9" ;
+    identifier = lower { lower | upper | digit | '_' } ;
+
+
+### Variables
+
+Variables are used for arguments in procedure definitions and are equivalent to
+Prolog variables. Note that Prolog's `_` variable is currently not a part of
+the Jing specification. Variables for `pick` are identified with a leading `#`.
+
+    variable = upper { lower | upper | digit | '_' } ;
+    pick_variable = '#' lower { lower | upper | digit | '_' } ;
+
+
+### Literals
+
+    integer = digit { digit } ;
+
 
 ### Keywords
+
+The following keywords are reserved and cannot be used.
 
 ```
 action
@@ -102,23 +133,13 @@ procedure
 prolog
 rel
 search
+then
 true
 while
 ```
 
-### Identifiers
 
-Identifiers must start with a lowercase letter, so they do not clash with
-Prolog variables.
-
-```
-identifier = [a-z][a-zA-Z0-9_]* ;
-number = [0-9]+ ;
-name = identifier ;
-variable = [A-Z][a-zA-Z0-9_]* ;
-```
-
-## Grammar
+### Grammar
 
 ```
 program = opt_xdcl_list ;
@@ -131,8 +152,8 @@ stmt = common_dcl, term
 
 empty_stmt = term ;
 
-simple_stmt = pseudo_expr
-            | formula_expr ;
+simple_stmt = predicate
+            | formula_stmt ;
 
 complex_stmt = if_stmt
              | while_stmt
@@ -166,43 +187,53 @@ pick_stmt = 'pick', pick_arg_list_r, compound_stmt ;
 search_stmt = 'search', compound_stmt ;
 
 interrupt_stmt = 'interrupt', '(', jing_expr, ')', compound_stmt
-               | 'interrupt', '(', jing_expr, ')', pseudo_expr ;
+               | 'interrupt', '(', jing_expr, ')', predicate ;
 
-ndet_stmt = 'ndet', '{', compound_stmt, or_list, '}' ;
+ndet_stmt = 'ndet', compound_stmt, or_list ;
 
-conc_stmt = 'conc', '{', compound_stmt, or_list, '}' ;
+conc_stmt = 'conc', compound_stmt, or_list ;
 
-pconc_stmt = 'pconc', '{', compound_stmt, or_list, '}' ;
+pconc_stmt = 'pconc', compound_stmt, then_list ;
 
 or_list = or_item
         | or_list, or_item ;
 
 or_item = 'or', compound_stmt ;
 
-formula_expr = '?', '(', expr, ')' ;
+then_list = then_item
+          | then_list, then_item ;
+
+then_item = 'then', compound_stmt ;
+
+formula_stmt = '?', '(', jing_expr, ')' ;
 
 jing_expr = '~', jing_expr
           | jing_expr, '||', jing_expr
           | jing_expr, '&&', jing_expr
           | '(', jing_expr, ')'
-          | "true"
-          | "false"
           | expr ;
 
-expr = op, '>', op
-     | op, '<', op
-     | op, '>=', op
-     | op, '<=', op
+expr = expr, '<', expr
+     | expr, '>', expr
+     | expr, '<=', expr
+     | expr, '>=', expr
      | pseudo_expr ;
 
-op = pseudo_expr
-   | number ;
+pseudo_expr = dcl_expr
+            | var
+            | identifier
+            | integer
+            | 'true'
+            | 'false'
+            | pick_variable ;
 
-pseudo_expr = name
-            | name, '(', opt_arg_list, ')' ;
+dcl_expr = identifier, '(', opt_arg_list, ')' ;
+
+predicate = identifier
+          | identifier, '(', opt_arg_list, ')' ;
 
 xdcl = common_dcl
-     | proc_dcl
+     | xproc_dcl
      | term ;
 
 common_dcl = action_dcl
@@ -210,15 +241,17 @@ common_dcl = action_dcl
            | fun_fluent_dcl
            | prolog_dcl ;
 
-action_dcl = 'action', name, ':', number ;
+action_dcl = 'action', identifier, ':', integer ;
 
-rel_fluent_dcl = 'rel', 'fluent', name, ':', number ;
+rel_fluent_dcl = 'rel fluent', identifier, ':', integer ;
 
-fun_fluent_dcl = 'fun' 'fluent', name, ':', number ;
+fun_fluent_dcl = 'fun fluent', identifier, ':', integer ;
 
-prolog_dcl = 'prolog', name, ':', number ;
+prolog_dcl = 'prolog', identifier, ':', integer ;
 
-proc_dcl = 'procedure', name, '(', opt_var_list, ')', compound_stmt ;
+xproc_dcl = proc_dcl, compound_stmt ;
+
+proc_dcl = 'procedure', identifier, '(', opt_var_list, ')' ;
 
 xdcl_list_r = xdcl
             | xdcl_list_r, xdcl ;
@@ -226,29 +259,28 @@ xdcl_list_r = xdcl
 stmt_list_r = stmt
             | stmt_list_r, stmt ;
 
-pick_arg_list_r = '#' name
-                | pick_arg_list_r, '#' name ;
-
 var_list_r = var
            | var_list_r, ',', var ;
 
-var: variable ;
+var = variable ;
 
 arg_list_r = arg
            | arg_list_r, ',', arg ;
 
-arg = pseudo_expr
-    | number
-    | variable
-    | '#' name ;
+arg = pseudo_expr ;
+
+pick_arg_list_r = pick_arg
+                | pick_arg_list_r, ',', pick_arg ;
+
+pick_arg = pick_variable ;
 
 opt_xdcl_list = { xdcl_list_r } ;
+
+opt_arg_list = { arg_list_r } ;
 
 opt_stmt_list = { stmt_list_r } ;
 
 opt_var_list = { var_list_r } ;
-
-opt_arg_list = { arg_list_r } ;
 
 term = ';' ;
 ```
