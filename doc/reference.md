@@ -293,6 +293,8 @@ Possible ideas for future work and improvements.
 **Support for additional Prolog operators.** For example: `=`, `is`, etc. There
 are many more that could be added.
 
+**Support floating point numbers.** Currently only integers are supported.
+
 **Shorthand control flow statements.** Allow for the omission of `{}` for a
 single statement following a control flow statement such as `if`, `while`, etc.
 
