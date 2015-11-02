@@ -286,7 +286,7 @@ term = ';' ;
 ```
 
 
-### Future work
+## Future work
 
 Possible ideas for future work and improvements.
 
@@ -315,3 +315,10 @@ as an alternative to the existing syntax:
 
 **Pretty print.** Add an option to output the generated Prolog code in a more
 readable format.
+
+**Improve error reporting.** More informative errors that output the line of
+code along with an indicator of where the error occured on that line.
+
+    action_undefined.jing:11:5 11:7 error: unresolved action `bar`
+    action_undefined.jing:11    bar;
+                                ^
