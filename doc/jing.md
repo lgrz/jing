@@ -1,9 +1,22 @@
-Jing
-====
+# User Guide
+
+* [Introduction](#introduction)
+* [jing2indigo](#jing2indigo)
+    * [Build Instructions](#build-instructions)
+    * [Install Instructions](#install-instructions)
+    * [Usage](#usage)
+* [Jing](#jing)
+    * [An introduction to Jing](#an-introduction-to-jing)
+    * [Going further: vacuum world example](#going-further-vacuum-world-example)
+    * [Expressions](#expressions)
+        * [Logical operators](#logical-operators)
+        * [Prolog expressions](#prolog-expressions)
+    * [Concurrency](#concurrency)
+    * [Semantic checks](#semantic-checks)
+    * [Examples](#examples)
 
 
-Introduction
-------------
+## Introduction
 
 Jing is an agent oriented programming language that provides a Java like syntax
 for writing [IndiGolog][indigolog] programs.
@@ -28,8 +41,7 @@ Jing is made up of two components: the Jing language and jing2indigo, a
 translation tool for converting Jing programs into IndiGolog programs.
 
 
-jing2indigo
------------
+## jing2indigo
 
 jing2indigo is a source-to-source translator that takes a program written in
 the Jing language and translates it into an IndiGolog program.
@@ -65,8 +77,12 @@ will only result in translating the file 1.jing:
     jing2indigo 1.jing 2.jing 3.jing
 
 
-Jing
-----
+## Jing
+
+This section details an overview of the Jing language.
+
+
+### An introduction to Jing
 
 Here we give a short introduction to the Jing language and in the next section
 we examine more of the language and its features in detail.
@@ -325,4 +341,5 @@ program, here we highlight some of the key semantic checks that are performed.
 
 ### Examples
 
-More examples of Jing programs can be found in the 'examples' directory.
+More examples of Jing programs can be found in the [examples](../examples)
+directory.
