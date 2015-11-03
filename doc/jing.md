@@ -91,7 +91,7 @@ Let's look at a simple example to get a feel for the syntax and some of the
 basic features of Jing:
 
     action forward: 0;
-    fun fluent goal: 0;
+    rel fluent goal: 0;
 
     procedure control() {
         while (~goal) {
