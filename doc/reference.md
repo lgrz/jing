@@ -1,6 +1,58 @@
 # Developer Guide
 
 
+## Overview
+
+Jing is a relatively simple language, and one of the design decisions was that
+all steps of parsing, semantic analysis and code generation are performed as a
+single pass (for the most part) over the input. Most of the calls to perform
+these tasks are embedded in the parser itself. However, each of the steps
+involved is more or less self contained in its own module(s).
+
+
+### Scanning and parsing
+
+The project uses [Flex][flex] and [Bison][bison] to handle the scanning and
+parsing of input files. A reference of the grammar used can be found below in
+the [grammar](#grammar) section.
+
+[flex]: http://flex.sourceforge.net
+[bison]: https://www.gnu.org/software/bison
+
+
+### Intermediate representation
+
+The in memory representation that is constructed during parsing more or less
+resembles a tree like data structure. Each type and language construct is
+represented as a node in the tree. Semantic checking and code generation
+utilise this data structure to perform their various tasks.
+
+
+### Semantic checker
+
+Some basic semantic analysis is performed on the intermediate representation
+at various stages during parsing. The semantic checker's primary goals are to
+validate the use of types in various contexts and to use this contextual
+information to report informative errors when they arise.
+
+
+### Code generation and output
+
+As each `procedure` is seen by the parser, code generation is performed before
+continuing on through the rest of the input (which is a list of procedures).
+
+Code generation traverses the intermediate representation of each `procedure`
+and this could be considered a second pass over the input. However, it is a
+single pass in the sense that code generation is performed at the same time as
+parsing and semantic analysis. The decision to perform code generation in this
+manner was for readability and maintainability, there is just one call to the
+code generation module from within the parser.
+
+The generated code is written out to an internal buffer and once the parser is
+done and all code has been generated, and providing there are no errors, the
+buffer is written to the output destination.
+
+
 ## Testing
 
 The project is configured with both unit tests and integration tests.
