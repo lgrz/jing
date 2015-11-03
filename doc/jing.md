@@ -268,7 +268,21 @@ expressions at this time. Current support extends to the following operators:
 
 If you find you need support for an operator not in the above list, for example
 unification `=`, a work around is to wrap the operator into a predicate and
-import it via the `prolog` declaration described earlier.
+import it via the `prolog` declaration described earlier. For example in the
+supporting Prolog code you might have:
+
+    % wrapper for unification
+    unify(S, T) :- S = T.
+
+which allows it to be used in Jing:
+
+    prolog unify: 2;
+
+    procedure myproc() {
+        if (unify(a, b)) {
+            // ...
+        }
+    }
 
 
 ### Concurrency
