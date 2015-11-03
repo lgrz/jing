@@ -252,19 +252,22 @@ Jing provides expression support for logical operations that are defined in the
 IndiGolog language as `and/2`, `or/2` and `neg/1`.
 
 In Jing the logical operators appear much the same way as they do in a Java
-like syntax:
+like syntax (except for negation):
 
     if (~a && b || c) {
         // ...
     }
+
+The `!` operator (cut) has a special meaning in Prolog, to prevent overloading
+and confusion the `~` operator is used to signify negation.
 
 
 #### Prolog expressions
 
 It is common for IndiGolog programs to make use of Prolog expressions and
 operators to perform various tasks. Jing provides limited support for such
-expressions at this time. Current support extends to the following operators:
-`<`, `<=`, `>`, `>=`.
+expressions at this time. Current support extends to the following arithmetic
+operators: `<`, `<=`, `>`, `>=`.
 
 If you find you need support for an operator not in the above list, for example
 unification `=`, a work around is to wrap the operator into a predicate and
@@ -336,7 +339,7 @@ procedure find_gold(N) {
 There are a number of semantic checks performed during translation of a Jing
 program, here we highlight some of the key semantic checks that are performed.
 
-* Use of an action limited to only as a [sequence statement][structured_prog].
+* Use of an `action` limited to only as a [sequence statement][structured_prog].
 * Use of a `rel fluent` is limited to only as a [selection
   statement][structured_prog] with the added restriction that it must be used
   with a relational operator i.e. an operator that takes two arguments. For
