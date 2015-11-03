@@ -1,5 +1,15 @@
 # Developer Guide
 
+* [Overview](#overview)
+    * [Scanning and parsing](#scanning-and-parsing)
+    * [Intermediate representation](#intermediate-representation)
+    * [Semantic checker](#semantic-checker)
+    * [Code generation and output](#code-generation-and-output)
+* [Limitations](#limitations)
+* [Testing](#testing)
+* [The Jing Language Reference](#the-jing-language-reference)
+* [Future work](#future-work)
+
 
 ## Overview
 
@@ -51,6 +61,64 @@ code generation module from within the parser.
 The generated code is written out to an internal buffer and once the parser is
 done and all code has been generated, and providing there are no errors, the
 buffer is written to the output destination.
+
+
+## Limitations
+
+**Validate procedure arguments.** Arguments to procedures are not checked for
+their correct use within the procedure (in a similar way to pick variables). It
+may make sense to check or not check them in future. One case for not checking
+them is where a local Prolog variable may be used inside a procedure that is
+used to store a return value from a predicate that is called within the
+procedure, this would make checking for the valid use of procedure arguments
+difficult.
+
+**Argument count for prolog/fluent is not checked.**
+
+**The expressions `?(~u > 1)` and `?(~(u > 1))` have the same semantics.** Even
+though `~` has a higher precedence than `>` in this case the first case `~u >
+1` is considered equivalent to `~(u > 1)`. This is unintuitive as the negation
+operator has higher precedence. A further implication is that `~` results in a
+true/false value and the currently available Prolog operators in Jing are all
+arithmetic operators which the Jing/IndiGolog logic operators cannot be used
+with.
+
+**An expression can't be passed as as argument to anything.** This is a pretty
+big limitation, some cases of where this would be useful are shown below.
+
+* A procedure that has a base case
+
+        procedure fib(N) { /* ... */ }
+        procedure fib(1) { /* ... */ } // error
+
+* Passing the result of an expression to other types that take arguments
+
+        rel fluent a: 1;
+        fun fluent b: 1;
+        procedure myproc(S) {}
+        procedure foo() {
+            if (b(~a)) {} // error
+            myproc(1 > 2); // error
+        }
+
+**Error reporting for expressions.** Errors reported from the result of using
+an action or procedure inside an expression don't display to the user the name
+of the item that caused the error.
+
+The problem is that offending item is reported as 'unknown'. The limitation in
+this case is that expression data structure needs to be traversed to find the
+offending item. More work is needed to provide a custom semcheck error data
+structure that can collect all of the relevant information at the time the
+error occurs instead of traversing data structures at the time of displaying the
+error. Going further the custom errors could be stored in an array or queue and
+then dumped out after parsing is done or, at any other time that is convenient.
+
+**The semantic checker performs both semantic analysis and error reporting.** A
+possible improvement could be to move the error reporting functionality to a
+separate error module.
+
+**Prolog anonymous variable.** The `_` anonymous variable can't be used in
+Jing.
 
 
 ## Testing
