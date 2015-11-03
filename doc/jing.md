@@ -6,7 +6,7 @@
     * [Install Instructions](#install-instructions)
     * [Usage](#usage)
 * [Jing](#jing)
-    * [An introduction to Jing](#an-introduction-to-jing)
+    * [An introduction](#an-introduction)
     * [Going further: vacuum world example](#going-further-vacuum-world-example)
     * [Expressions](#expressions)
         * [Logical operators](#logical-operators)
@@ -82,7 +82,7 @@ will only result in translating the file 1.jing:
 This section details an overview of the Jing language.
 
 
-### An introduction to Jing
+### An introduction
 
 Here we give a short introduction to the Jing language and in the next section
 we examine more of the language and its features in detail.
