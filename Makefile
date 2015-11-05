@@ -11,7 +11,7 @@ TARGET = jing2indigo
 
 GIT = $(shell which git)
 GITDIR = $(shell stat .git > /dev/null; echo $$?)
-VERSION_NUM = 0.1.0
+VERSION_NUM = 0.2.0
 VERSION_EXTRA = -dev
 ifneq ($(GIT),)
 ifeq ($(GITDIR), 0)
