@@ -184,7 +184,7 @@ static void
 usage(void)
 {
     fprintf(stderr, "Usage: jing2indigo [OPTIONS] file.jing\n");
-    printf("\nOptions:\n"
+    fprintf(stderr, "\nOptions:\n"
             "  -h           Display this message\n"
             "  -o <file>    Write output to file\n"
             "  -v           Display version and exit\n\n");
